@@ -1,0 +1,27 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Local env / secrets (do not commit)
+.env
+.env.*
+!.env.example
+
+# Local config overrides (optional; keep ai.config.yml in git)
+ai/ai.config.local.yml
+*.local.yml
+
+# Logs / temp
+*.log
+tmp/
+temp/
+.cache/
+
+# Dependencies (if you add scripts later)
+node_modules/
