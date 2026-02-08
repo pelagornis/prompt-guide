@@ -43,18 +43,39 @@ The same setup works across **iOS, Android, Flutter, Web, and Server** projects.
 | **System role** | Single source of truth: `system_role` points to `prompts/system.core.yml`; tools use the `prompt` key for injection. |
 | **Platform-specific config** | Set `platform: ios` (or android, flutter, web, server) to use per-platform context and rules; each platform has its own `context.include` and `rules_key` into `rules.by-platform.yml`. |
 | **Human-readable docs** | Rule summaries in `docs/*.md` so people can read the rules without parsing YAML. |
+| **CLI** | `npx prompt-guide-cli init` — install in any project: pick platform, copy config, set `.gitignore`. See [cli/README.md](cli/README.md). |
 
 ---
 
 ## Quick Start
 
-1. **Fork or clone** this repository into your project (or use it as a reference and copy `ai/` and `prompts/`).
+**Option A — CLI (recommended for new projects)**  
+From any project directory, run:
+
+```bash
+npx prompt-guide-cli init
+```
+
+Then choose platform (ios / android / flutter / web / server). The CLI copies `ai/`, `prompts/`, `docs/`, sets `platform` in `ai/ai.config.yml`, and appends recommended `.gitignore` entries. See [cli/README.md](cli/README.md) for details.
+
+**Using the CLI from this repo (no `cd cli`)**  
+At the **repository root** you can run:
+
+```bash
+npm install    # installs CLI deps (workspaces)
+npm run build  # builds the CLI
+npm run init   # runs init (interactive)
+npm run cli -- init --platform=ios   # run any CLI command
+```
+
+**Option B — Manual**  
+1. Fork or clone this repository into your project (or copy `ai/`, `prompts/`, `docs/`).
 2. **Edit `ai/ai.config.yml`**:
    - Set `model.default` to your tool’s model id (e.g. `claude-sonnet-4`, `gpt-4o`).
    - Set `context.include` to your source paths (e.g. `src/**`, `app/**`, `lib/**`).
    - Optionally set `platform: ios` (or android, flutter, web, server) and adjust `platforms.<id>.context.include` for that platform’s paths.
    - Optionally tighten `context.exclude` for your repo (secrets, build dirs).
-3. **Point your tool** at `ai.config.yml` (and at the paths under `prompts/` for loading the `prompt` key from YAML).
+3. **Point your tool** (or use the CLI above) at `ai.config.yml` (and at the paths under `prompts/` for loading the `prompt` key from YAML).
 4. **Use a task preset** (e.g. `review`, `refactor`, `fix_bug`) when running the agent so it loads the right prompt and behavior.
 5. **Read the rules** in `docs/system.core.md`, `docs/review.md`, and `docs/rules-by-platform.md` when you need the human-friendly summary.
 
@@ -244,6 +265,11 @@ Global rules applied to all presets. Your tool should interpret these as strict 
 
 ```
 prompt-guide/
+├── cli/                     # prompt-guide-cli: npx prompt-guide-cli init
+│   ├── bin/cli.js
+│   ├── lib/init.js
+│   ├── templates/           # ai/, prompts/, docs/ (shipped with CLI)
+│   └── README.md
 ├── ai/
 │   └── ai.config.yml          # Single source of truth: model, context, rules, presets, system role
 ├── prompts/

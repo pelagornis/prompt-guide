@@ -25,3 +25,31 @@ temp/
 
 # Dependencies (if you add scripts later)
 node_modules/
+
+# CLI (when developing the CLI)
+cli/node_modules/
+cli/dist/
+
+# prompt-guide (added by prompt-guide-cli)
+# OS
+.DS_Store
+Thumbs.db
+# Editor / IDE
+.idea/
+*.swp
+*.swo
+*~
+# Local env / secrets
+.env
+.env.*
+!.env.example
+# Local config overrides
+ai/ai.config.local.yml
+*.local.yml
+# Logs / temp
+*.log
+tmp/
+temp/
+.cache/
+# Dependencies
+node_modules/

@@ -1,0 +1,184 @@
+# ============================================================
+# Base config: model, context, rules, task presets, system role
+# ============================================================
+
+ai:
+  root: ai/
+
+# ---------------------------------------------------------------------------
+# Model (global default; presets can override)
+# ---------------------------------------------------------------------------
+model:
+  default: claude-sonnet-4    # e.g. claude-sonnet-4, gpt-4o, gpt-4o-mini — use your tool's model id
+  # Optional: list available models for this project (for UI or validation)
+  options:
+    - claude-sonnet-4
+    - claude-opus-4
+    - gpt-4o
+    - gpt-4o-mini
+
+# ---------------------------------------------------------------------------
+# Context Scope (security + accuracy)
+# ---------------------------------------------------------------------------
+context:
+  # Allow-list: only these paths are eligible for context (adjust when forking)
+  include:
+    - src/**
+    - lib/**
+    - app/**
+    - packages/**
+  # Deny-list: never send to model (security + reduce noise for accuracy)
+  exclude:
+    # Security: never include secrets or credentials
+    - "**/.env"
+    - "**/.env.*"
+    - "**/.env.local"
+    - "**/secrets/**"
+    - "**/*secret*"
+    - "**/*credentials*"
+    - "**/*.pem"
+    - "**/*.key"
+    - "**/GoogleService-Info.plist"
+    - "**/keystore*"
+    - "**/.npmrc"
+    - "**/.netrc"
+    # Build/cache: not useful for reasoning
+    - "**/node_modules/**"
+    - "**/dist/**"
+    - "**/build/**"
+    - "**/.next/**"
+    - "**/out/**"
+    - "**/.git/**"
+    - "**/.cache/**"
+    - "**/vendor/**"
+  max_files: 50
+  max_tokens: 8000
+
+# ---------------------------------------------------------------------------
+# System Role (connected to default prompt)
+# ---------------------------------------------------------------------------
+system_role: prompts/system.core.yml
+
+# ---------------------------------------------------------------------------
+# Prompts (default = system role; review = review preset)
+# ---------------------------------------------------------------------------
+prompts:
+  default: prompts/system.core.yml
+  review: prompts/review.yml
+
+# ---------------------------------------------------------------------------
+# Task Presets (agent-style: pick preset → load prompt + behavior)
+# ---------------------------------------------------------------------------
+task_presets:
+  default:
+    description: "General coding and editing with full system rules"
+    prompt: prompts/system.core.yml
+    context_scope: default
+    # model: optional override; omit to use model.default
+  review:
+    description: "Code review with checklist and approval criteria"
+    prompt: prompts/review.yml
+    context_scope: default
+    model: claude-sonnet-4   # optional: e.g. use stronger model for review
+  refactor:
+    description: "Refactor with style and structure rules only"
+    prompt: prompts/system.core.yml
+    rules_extra:
+      - "Change behavior only when explicitly requested; preserve semantics."
+      - "Prefer small, incremental steps; one logical change per step."
+  implement:
+    description: "Implement a feature from spec or ticket"
+    prompt: prompts/system.core.yml
+    rules_extra:
+      - "Implement exactly what is specified; do not add out-of-scope features."
+      - "Add tests or test plan for new behavior."
+  fix_bug:
+    description: "Locate and fix a bug with minimal change"
+    prompt: prompts/system.core.yml
+    rules_extra:
+      - "Identify root cause before changing code."
+      - "Minimal diff; no refactors unless required for the fix."
+  security_audit:
+    description: "Security-focused review (secrets, injection, validation)"
+    prompt: prompts/review.yml
+    model: claude-sonnet-4   # optional: e.g. prefer same or different model for audits
+    rules_extra:
+      - "Focus only on: secrets in code, input validation, auth boundaries, sensitive data in logs."
+
+# ---------------------------------------------------------------------------
+# Platform-specific settings (merge with base when platform is selected)
+# Set top-level "platform: ios" (or env) to activate; then context + rules merge from below
+# ---------------------------------------------------------------------------
+platform: null   # active platform: ios | android | flutter | web | server (null = no override)
+
+platforms:
+  ios:
+    label: iOS
+    context:
+      include:
+        - ios/**
+        - "*.xcodeproj/**"
+        - "*.xcworkspace/**"
+        - Shared/**
+        - src/**
+    # model.default: optional override
+    rules_key: ios   # merge prompt from prompts/rules.by-platform.yml → platforms.ios (+ common)
+
+  android:
+    label: Android
+    context:
+      include:
+        - android/**
+        - app/**
+        - lib/**
+        - src/**
+    rules_key: android
+
+  flutter:
+    label: Flutter
+    context:
+      include:
+        - lib/**
+        - ios/**
+        - android/**
+        - test/**
+        - pubspec.yaml
+    rules_key: flutter
+
+  web:
+    label: Web
+    context:
+      include:
+        - src/**
+        - public/**
+        - app/**
+        - "*.config.js"
+        - "*.config.ts"
+    rules_key: web
+
+  server:
+    label: Server
+    context:
+      include:
+        - src/**
+        - lib/**
+        - app/**
+        - internal/**
+        - cmd/**
+    rules_key: server
+
+# ---------------------------------------------------------------------------
+# Rules (strict; enforced for all presets unless overridden)
+# ---------------------------------------------------------------------------
+rules:
+  # Behavior
+  no_auto_scan: true
+  deterministic: true
+  strict: true
+  # Security & accuracy
+  no_hallucination: true
+  cite_sources: true
+  require_file_refs: true
+  # Scope
+  stay_in_scope: true
+  no_unsolicited_changes: true

@@ -1,0 +1,32 @@
+# 작업용 프롬프트 템플릿 (system.core + 플랫폼 규칙 적용 전제)
+# 복사 후 values 채워서 AI에 붙여넣기. YAML 그대로 전달하거나 아래 prompt 문자열로 렌더 가능.
+
+meta:
+  name: guide.template
+  platform_agnostic: true
+
+# 채울 필드 (주석 제거 후 값 입력)
+fields:
+  platform: "iOS | Android | Flutter | Web | Server | 기타"
+  role: "한 줄 역할, 예: 이 저장소 iOS 앱 수정 담당"
+  context:
+    project: ""
+    path: ""
+    stack: ""
+    rules_ref: "rules.by-platform 해당 블록 등"
+  task: "동사로 명확히: 구현/수정/검증 대상"
+  constraints: []
+  output:
+    format: "코드만 | 설명+코드 | 체크리스트 등"
+    include: "사용법·테스트·주의사항 등"
+  example: ""
+
+# 렌더 예시 (필드 채운 뒤 이 형식으로 조합해 사용)
+prompt_example: |
+  플랫폼: {{ platform }}
+  역할: {{ role }}
+  맥락: 프로젝트 {{ context.project }}, 경로 {{ context.path }}, 스택 {{ context.stack }}. 참고 규칙: {{ context.rules_ref }}
+  작업: {{ task }}
+  제약: {{ constraints }}
+  출력: 형식 {{ output.format }}, 포함 {{ output.include }}
+  예시: {{ example }}

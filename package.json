@@ -1,0 +1,15 @@
+{
+  "name": "prompt-guide",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Config-driven prompt guide for AI-assisted coding (YAML + CLI)",
+  "license": "MIT",
+  "workspaces": [
+    "cli"
+  ],
+  "scripts": {
+    "build": "npm run build -w prompt-guide-cli",
+    "init": "node cli/bin/cli.js init",
+    "cli": "node cli/bin/cli.js"
+  }
+}
