@@ -3,7 +3,8 @@
 실제 주입용 문장은 **YAML**에 있습니다.  
 → `prompts/rules.by-platform.yml` (도구는 `platforms.<이름>.prompt` 사용)
 
-포크 시 **대상 플랫폼 블록만** 사용. 여러 플랫폼이면 블록을 병합합니다.
+- **언제 적용되는지**: `ai.config.yml`에서 `platform: ios`(또는 android, flutter, web, server)로 설정된 경우, 해당 플랫폼 블록이 시스템 역할 뒤에 병합됩니다. `platform: null`이면 이 규칙은 적용되지 않습니다.
+- **포크 시**: 대상 플랫폼 블록만 사용. 여러 플랫폼을 쓰는 프로젝트면 블록을 병합해 사용할 수 있습니다.
 
 ---
 

@@ -23,6 +23,11 @@ Follow semantic versioning when creating tags:
 
 ## Contribution Guidelines
 
+### Feature requests and bug reports
+
+- **New feature or improvement**: Open an issue and choose the **Feature Request** template. Fill in the problem, proposed solution, and area (CLI, config, docs, etc.) so we can prioritize.
+- **Bug**: Open an issue and choose the **Bug Report** template. Include what happened, expected behavior, and the full error log.
+
 ### Code Style
 
 Follow the [pelagornis styleguide](https://pelagornis.github.io/styleguide/).
@@ -32,7 +37,7 @@ Ensure all commits have meaningful messages.
 ### Submitting a PR
 
 1. Fork the repository and create a feature branch.
-2. Open a pull request with a clear description of your changes.
+2. Open a pull request with a clear description of your changes. Use the PR template (summary, type of change, how you tested).
 3. Ensure that all tests pass before requesting a review.
 4. Add relevant documentation if necessary.
 

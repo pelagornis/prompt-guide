@@ -1,6 +1,6 @@
 # Prompt Guide
 
-A **config-driven prompt guide** for AI-assisted coding. All behavior is defined in `ai/ai.config.yml`: model choice, context scope (with security-aware exclusions), strict rules, task presets (agent-style workflows), and system role. Prompts are stored in YAML; humans can read rule summaries in Markdown under `docs/`.
+**CLI project, not a project template.** This repo is a tool that adds rules, docs, and config to any project. Install globally (`npm i -g prompt-guide-cli`) and run `prompt-guide init` in any directory to add `ai/`, `prompts/`, `docs/`, and platform-specific `.gitignore`. All behavior is defined in `ai/ai.config.yml` (model, context, rules, task presets, system role). Prompts live in YAML; human summaries are in `docs/` as Markdown.
 
 ---
 
@@ -12,6 +12,7 @@ A **config-driven prompt guide** for AI-assisted coding. All behavior is defined
 - [Configuration Reference](#configuration-reference)
 - [File Structure](#file-structure)
 - [Usage Guide](#usage-guide)
+- [What installs what](#what-installs-what)
 - [Customization](#customization)
 - [Rule Strength](#rule-strength)
 - [License](#license)
@@ -28,7 +29,7 @@ Prompt Guide gives you a single YAML config (`ai/ai.config.yml`) that controls:
 - **Which “agent”** runs: task presets (default, review, refactor, implement, fix_bug, security_audit) each with their own prompt and optional model/rules.
 - **System role**: one file (`prompts/system.core.yml`) that defines base behavior; its `prompt` key is what gets injected.
 
-The same setup works across **iOS, Android, Flutter, Web, and Server** projects. Fork the repo, point `context.include` at your code paths, and optionally add platform-specific rules from `prompts/rules.by-platform.yml`.
+The same setup works across **iOS, Android, Flutter, Web, and Server** projects. Use the CLI to install into any directory, then point `context.include` at your code paths and optionally set `platform` in `ai.config.yml`.
 
 ---
 
@@ -49,14 +50,18 @@ The same setup works across **iOS, Android, Flutter, Web, and Server** projects.
 
 ## Quick Start
 
-**Option A — CLI (recommended for new projects)**  
-From any project directory, run:
+**Option A — CLI (no project dependency)**  
+Install once globally (e.g. on macOS), then run from any directory:
 
 ```bash
-npx prompt-guide-cli init
+npm i -g prompt-guide-cli
+prompt-guide init
+# or: prompt-guide init --platform=ios
 ```
 
-Then choose platform (ios / android / flutter / web / server). The CLI copies `ai/`, `prompts/`, `docs/`, sets `platform` in `ai/ai.config.yml`, and appends recommended `.gitignore` entries. See [cli/README.md](cli/README.md) for details.
+No need to add the package to your project’s `package.json`. The CLI copies `ai/`, `prompts/`, `docs/` into the current directory and appends platform-specific `.gitignore`. See [cli/README.md](cli/README.md).
+
+Alternatively, one-off without global install: `npx prompt-guide-cli init`
 
 **Using the CLI from this repo (no `cd cli`)**  
 At the **repository root** you can run:
@@ -78,6 +83,20 @@ npm run cli -- init --platform=ios   # run any CLI command
 3. **Point your tool** (or use the CLI above) at `ai.config.yml` (and at the paths under `prompts/` for loading the `prompt` key from YAML).
 4. **Use a task preset** (e.g. `review`, `refactor`, `fix_bug`) when running the agent so it loads the right prompt and behavior.
 5. **Read the rules** in `docs/system.core.md`, `docs/review.md`, and `docs/rules-by-platform.md` when you need the human-friendly summary.
+
+---
+
+## What installs what
+
+**Any project** can use the same layout: rules and docs are installed once (CLI or copy), then you only tweak config.
+
+- **Install**: `ai/`, `prompts/`, `docs/` (+ platform-specific `.gitignore` when using the CLI).
+- **Which feature adds what**: see **[docs/WHAT-INSTALLS.md](docs/WHAT-INSTALLS.md)** for a detailed map:
+  - What each installed path adds (rules vs docs vs config).
+  - What each `ai.config.yml` section controls.
+  - What each prompt file and task preset adds.
+  - What each platform adds (context + rules).
+  - **After install**: how to change platform, presets, context, model, or add new presets.
 
 ---
 

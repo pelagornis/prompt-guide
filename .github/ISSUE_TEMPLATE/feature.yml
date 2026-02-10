@@ -1,0 +1,50 @@
+name: Feature Request
+description: Suggest a new feature or improvement for Prompt Guide
+title: "[Feature] "
+labels: ["type: feature", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please fill out the sections below so we can understand and prioritize your request.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or motivation
+      description: What problem does this solve, or what workflow would it improve?
+      placeholder: "e.g. I always have to ... and it would be easier if ..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed solution
+      description: Describe the feature or change you'd like
+      placeholder: "e.g. Add a new CLI command that ... / Support ... in ai.config.yml"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Where does this apply?
+      options:
+        - CLI (init, doctor, commands)
+        - Config (ai.config.yml, prompts)
+        - Docs
+        - Templates (ai/, prompts/, docs/ content)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any other approaches or workarounds you've thought about
+      placeholder: "e.g. I could do X today but ..."
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Screenshots, examples, or links if helpful
+      render: markdown

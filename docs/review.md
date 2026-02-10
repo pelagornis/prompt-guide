@@ -5,6 +5,10 @@
 
 ---
 
+## 적용 범위
+
+- **언제 사용되는지**: `ai.config.yml`의 `prompts.review`, 그리고 `task_presets.review`, `task_presets.security_audit`에서 이 프롬프트가 사용됩니다. 코드 리뷰·보안 감사 시 선택하는 preset입니다.
+
 ## 검사 범위
 
 diff 전체, 신규 의존성, 설정·env 변경을 **전부** 검토.

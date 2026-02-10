@@ -7,7 +7,8 @@
 
 ## 적용 범위
 
-iOS·Android·Flutter·Web·Server 등 모든 플랫폼 포크에 동일 적용. 언어·프레임워크 중립.
+- **언제 적용되는지**: `ai.config.yml`의 `system_role`, `prompts.default`, 그리고 대부분의 `task_presets`(default, refactor, implement, fix_bug 등)에서 이 규칙이 시스템 역할로 주입됩니다. 리뷰 전용 preset(review, security_audit)은 `prompts/review.yml`을 사용합니다.
+- **대상**: iOS·Android·Flutter·Web·Server 등 모든 플랫폼에 공통 적용. 언어·프레임워크 중립.
 
 ## 역할·응답
 

@@ -1,10 +1,21 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-/** Resolve path to templates (from dist/ or from src/ when using tsx). */
+/** CLI package root (cli/). */
+const pkgRoot = path.join(__dirname, '..', '..');
+
+/** Repo root (prompt-guide/). */
+const repoRoot = path.join(pkgRoot, '..');
+
+/**
+ * Directory that contains ai/, prompts/, docs/.
+ * - In repo: repo root (./ai, ./docs, ./prompts).
+ * - When published: package root has ai/, docs/, prompts/ (copied by prepublishOnly).
+ */
 export function getTemplatesDir(): string {
-  const base = path.join(__dirname, '..', '..');
-  return path.join(base, 'templates');
+  if (fs.existsSync(path.join(pkgRoot, 'ai'))) return pkgRoot;
+  return repoRoot;
 }

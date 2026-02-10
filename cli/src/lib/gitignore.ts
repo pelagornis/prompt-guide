@@ -1,9 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type { Platform } from '../schemas.js';
 
 const MARKER = '# prompt-guide (added by prompt-guide-cli)';
 
-export const GITIGNORE_APPEND = `${MARKER}
+const COMMON = `# prompt-guide common
 # OS
 .DS_Store
 Thumbs.db
@@ -28,7 +29,70 @@ temp/
 node_modules/
 `;
 
-export function mergeGitignore(cwd: string): { updated: boolean } {
+const BY_PLATFORM: Record<Platform, string> = {
+  ios: `# prompt-guide (iOS)
+# Xcode / CocoaPods
+Pods/
+build/
+DerivedData/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+Carthage/Build/
+`,
+  android: `# prompt-guide (Android)
+# Gradle / Android
+build/
+.gradle/
+local.properties
+*.iml
+.cxx/
+capture/
+`,
+  flutter: `# prompt-guide (Flutter)
+# Dart / Flutter
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+`,
+  web: `# prompt-guide (Web)
+# Build output
+dist/
+.next/
+out/
+.nuxt/
+.output/
+.vuepress/dist
+.parcel-cache/
+.vite/
+*.local
+`,
+  server: `# prompt-guide (Server)
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+# Go
+vendor/
+# Rust
+target/
+# Terraform
+.terraform/
+*.tfstate*
+`,
+};
+
+export function getGitignoreForPlatform(platform: Platform): string {
+  return `${MARKER}\n${COMMON}\n${BY_PLATFORM[platform]}`;
+}
+
+export function mergeGitignore(cwd: string, platform: Platform): { updated: boolean } {
   const gitignorePath = path.join(cwd, '.gitignore');
   let existing = '';
   if (fs.existsSync(gitignorePath)) {
@@ -36,6 +100,6 @@ export function mergeGitignore(cwd: string): { updated: boolean } {
     if (existing.includes(MARKER)) return { updated: false };
     existing = existing.trimEnd() + '\n\n';
   }
-  fs.writeFileSync(gitignorePath, existing + GITIGNORE_APPEND);
+  fs.writeFileSync(gitignorePath, existing + getGitignoreForPlatform(platform));
   return { updated: true };
 }
