@@ -9,6 +9,20 @@ Thank you for your interest in contributing to Pelagornis! We welcome contributi
 
 To create a new release, use the GitHub UI at: [Pelagornis Releases](https://github.com/pelagornis/)
 
+### Publishing CLI to npm
+
+The **prompt-guide-cli** package is published to npm via GitHub Actions when a **version tag** is pushed.
+
+1. **One-time setup**: In the repo **Settings → Secrets and variables → Actions**, add a secret **NPM_TOKEN** with an [npm Automation token](https://www.npmjs.com/account/tokens) (no 2FA required for automation).
+2. **Release**: Create and push a tag matching `v*` (e.g. `v1.0.1`). The workflow [.github/workflows/release.yml](.github/workflows/release.yml) will set the CLI version from the tag, build, and run `npm publish -w prompt-guide-cli`.
+
+   ```bash
+   git tag v1.0.1
+   git push origin v1.0.1
+   ```
+
+   The tag version (e.g. `1.0.1`) is applied to `cli/package.json` in the workflow; you do not need to bump the version in the repo before tagging.
+
 ### Versioning
 
 Follow semantic versioning when creating tags:

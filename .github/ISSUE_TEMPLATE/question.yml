@@ -1,0 +1,38 @@
+name: Question / Other
+description: Ask a question or open an issue that doesn't fit Bug or Feature
+title: "[Question] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe your question or topic below.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      placeholder: One-line summary of your question or topic
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      placeholder: Context, environment, what you've tried, etc.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - CLI
+        - Config / Prompts
+        - Docs
+        - Setup / config
+        - Other
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional (optional)
+      render: markdown
