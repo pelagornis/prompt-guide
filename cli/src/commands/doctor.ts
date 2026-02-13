@@ -117,8 +117,18 @@ export function printDoctorResults(
   results: DoctorResult[],
   allOk: boolean,
   verbose: boolean,
-  fixed: string[] = []
+  fixed: string[] = [],
+  json = false
 ): void {
+  if (json) {
+    const out = {
+      ok: allOk,
+      results: results.map((r) => ({ ok: r.ok, message: r.message, hint: r.hint })),
+      fixed,
+    };
+    console.log(JSON.stringify(out, null, 0));
+    return;
+  }
   console.log(chalk.dim('  Doctor') + ' — checking prompt-guide setup\n');
   console.log(BAR);
   for (const r of results) {

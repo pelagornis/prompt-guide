@@ -19,3 +19,14 @@ export function getTemplatesDir(): string {
   if (fs.existsSync(path.join(pkgRoot, 'ai'))) return pkgRoot;
   return repoRoot;
 }
+
+/** CLI version from package.json. */
+export function getVersion(): string {
+  const pkgPath = path.join(pkgRoot, 'package.json');
+  try {
+    const json = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+    return typeof json.version === 'string' ? json.version : '1.0.0';
+  } catch {
+    return '1.0.0';
+  }
+}

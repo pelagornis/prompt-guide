@@ -19,10 +19,12 @@ function renderBanner(): string {
   return blue(promptArt) + '\n' + blue(guideArt);
 }
 
-export type InitOptions = { dryRun?: boolean; verbose?: boolean };
+const DEFAULT_PLATFORM: Platform = 'web';
+
+export type InitOptions = { dryRun?: boolean; verbose?: boolean; yes?: boolean };
 
 export async function runInit(platformFromOption?: string, options: InitOptions = {}): Promise<void> {
-  const { dryRun = false, verbose = false } = options;
+  const { dryRun = false, verbose = false, yes = false } = options;
   const cwd = process.cwd();
   const templatesDir = getTemplatesDir();
 
@@ -36,6 +38,9 @@ export async function runInit(platformFromOption?: string, options: InitOptions 
   if (parsed && ['ios', 'android', 'flutter', 'web', 'server'].includes(parsed)) {
     platform = parsed as Platform;
     console.log(chalk.dim('  Platform:') + ' ' + chalk.cyan(platform));
+  } else if (yes) {
+    platform = DEFAULT_PLATFORM;
+    console.log(chalk.dim('  Platform:') + ' ' + chalk.cyan(platform) + chalk.dim(' (--yes)'));
   } else {
     platform = await askPlatform();
   }
@@ -50,12 +55,24 @@ export async function runInit(platformFromOption?: string, options: InitOptions 
   const promptsSrc = path.join(templatesDir, 'prompts');
   const docsSrc = path.join(templatesDir, 'docs');
 
+  const aiDest = path.join(cwd, 'ai');
+  const promptsDest = path.join(cwd, 'prompts');
+  const docsDest = path.join(cwd, 'docs');
+  const existingDirs: string[] = [];
+  if (fs.existsSync(aiDest)) existingDirs.push('ai/');
+  if (fs.existsSync(promptsDest)) existingDirs.push('prompts/');
+  if (fs.existsSync(docsDest)) existingDirs.push('docs/');
+  if (existingDirs.length > 0 && !dryRun) {
+    console.log(chalk.yellow('  ⚠ ') + 'Existing: ' + existingDirs.join(', ') + chalk.dim(' (will be overwritten)'));
+    console.log('');
+  }
+
   if (dryRun) {
     console.log(chalk.dim('  Would install'));
     console.log(BAR);
-    if (fs.existsSync(aiSrc)) console.log(chalk.blue('  →') + ' copy ai/ → ' + path.join(cwd, 'ai'));
-    if (fs.existsSync(promptsSrc)) console.log(chalk.blue('  →') + ' copy prompts/ → ' + path.join(cwd, 'prompts'));
-    if (fs.existsSync(docsSrc)) console.log(chalk.blue('  →') + ' copy docs/ → ' + path.join(cwd, 'docs'));
+    if (fs.existsSync(aiSrc)) console.log(chalk.blue('  →') + ' copy ai/ → ' + aiDest);
+    if (fs.existsSync(promptsSrc)) console.log(chalk.blue('  →') + ' copy prompts/ → ' + promptsDest);
+    if (fs.existsSync(docsSrc)) console.log(chalk.blue('  →') + ' copy docs/ → ' + docsDest);
     console.log(chalk.blue('  →') + ' set platform in ai/ai.config.yml');
     console.log(chalk.blue('  →') + ' append .gitignore if needed');
     console.log(BAR);
@@ -63,9 +80,9 @@ export async function runInit(platformFromOption?: string, options: InitOptions 
     return;
   }
 
-  if (fs.existsSync(aiSrc)) copyRecursive(aiSrc, path.join(cwd, 'ai'));
-  if (fs.existsSync(promptsSrc)) copyRecursive(promptsSrc, path.join(cwd, 'prompts'));
-  if (fs.existsSync(docsSrc)) copyRecursive(docsSrc, path.join(cwd, 'docs'));
+  if (fs.existsSync(aiSrc)) copyRecursive(aiSrc, aiDest);
+  if (fs.existsSync(promptsSrc)) copyRecursive(promptsSrc, promptsDest);
+  if (fs.existsSync(docsSrc)) copyRecursive(docsSrc, docsDest);
 
   setPlatformInConfig(cwd, platform);
   const { updated: gitignoreUpdated } = mergeGitignore(cwd, platform);

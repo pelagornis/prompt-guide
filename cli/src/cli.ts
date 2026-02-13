@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { runInit } from './commands/init.js';
 import { runDoctor, printDoctorResults } from './commands/doctor.js';
 import { platformSchema, PLATFORMS } from './schemas.js';
+import { getVersion } from './lib/paths.js';
 
 function getBanner(): string {
   const opts = { font: 'Slant' as const, horizontalLayout: 'fitted' as const };
@@ -19,7 +20,7 @@ const program = new Command();
 program
   .name('prompt-guide')
   .description('Prompt Guide — set up in your project: pick platform, copy config, set .gitignore')
-  .version('1.0.0')
+  .version(getVersion())
   .option('-v, --verbose', 'Show extra details');
 
 program.addHelpText(
@@ -42,12 +43,14 @@ program
     }
   )
   .option('--dry-run', 'Show what would be done without writing files')
-  .action(async (opts: { platform?: string; dryRun?: boolean }) => {
+  .option('-y, --yes', 'Non-interactive: use default platform (web) when --platform is omitted')
+  .action(async (opts: { platform?: string; dryRun?: boolean; yes?: boolean }) => {
     try {
       const globalOpts = program.opts();
       await runInit(opts.platform, {
         dryRun: opts.dryRun,
         verbose: globalOpts.verbose,
+        yes: opts.yes,
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
@@ -60,10 +63,11 @@ program
   .command('doctor')
   .description('Check prompt-guide setup (ai/, config, prompts/, docs/, .gitignore)')
   .option('--fix', 'Append .gitignore block if missing')
-  .action((opts: { fix?: boolean }) => {
+  .option('--json', 'Output results as JSON (for scripting)')
+  .action((opts: { fix?: boolean; json?: boolean }) => {
     const globalOpts = program.opts();
     const { results, allOk, fixed } = runDoctor(process.cwd(), globalOpts.verbose, opts.fix ?? false);
-    printDoctorResults(results, allOk, globalOpts.verbose, fixed);
+    printDoctorResults(results, allOk, globalOpts.verbose, fixed, opts.json ?? false);
     process.exit(allOk ? 0 : 1);
   });
 
@@ -73,10 +77,12 @@ program.addHelpText(
 
 Examples:
   ${chalk.cyan('npx prompt-guide-cli init')}              Interactive: asks for platform
+  ${chalk.cyan('npx prompt-guide-cli init -y')}           Non-interactive (default: web)
   ${chalk.cyan('npx prompt-guide-cli init --platform=ios')}
-  ${chalk.cyan('npx prompt-guide-cli init -p flutter')}
-  ${chalk.cyan('npx prompt-guide-cli init --dry-run')}    Show planned changes only
+  ${chalk.cyan('npx prompt-guide-cli init -p flutter --dry-run')}
   ${chalk.cyan('npx prompt-guide-cli doctor')}            Check setup health
+  ${chalk.cyan('npx prompt-guide-cli doctor --fix')}       Auto-fix .gitignore
+  ${chalk.cyan('npx prompt-guide-cli doctor --json')}      JSON output for scripting
 
 What init does:
   · Copies ai/, prompts/, docs/ into the current directory
