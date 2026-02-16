@@ -1,0 +1,32 @@
+# Task prompt template (assumes system.core + platform rules apply)
+# Copy, fill values, then paste into the AI. Use as YAML or render from the prompt_example below.
+
+meta:
+  name: guide.template
+  platform_agnostic: true
+
+# Fields to fill (remove comments and enter values)
+fields:
+  platform: "iOS | Android | Flutter | Web | Server | Other"
+  role: "One-line role, e.g. Modify the iOS app in this repo"
+  context:
+    project: ""
+    path: ""
+    stack: ""
+    rules_ref: "e.g. rules.by-platform block for this platform"
+  task: "Clear verb: what to implement/fix/verify"
+  constraints: []
+  output:
+    format: "code only | explanation+code | checklist etc."
+    include: "usage, how to test, caveats etc."
+  example: ""
+
+# Render example (combine in this format after filling fields)
+prompt_example: |
+  Platform: {{ platform }}
+  Role: {{ role }}
+  Context: project {{ context.project }}, path {{ context.path }}, stack {{ context.stack }}. Rules: {{ context.rules_ref }}
+  Task: {{ task }}
+  Constraints: {{ constraints }}
+  Output: format {{ output.format }}, include {{ output.include }}
+  Example: {{ example }}

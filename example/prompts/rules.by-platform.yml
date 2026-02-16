@@ -1,0 +1,59 @@
+# Per-platform rules (when forking, use only the relevant platform(s); merge if multiple)
+# Tools: use platforms.<name>.prompt. Human-readable: docs/rules-by-platform.md
+
+meta:
+  strict: true
+  usage: "system.core + selected platform prompt merged"
+
+platforms:
+  ios:
+    name: iOS
+    stack: Swift / SwiftUI / UIKit
+    prompt: |
+      ## iOS (required additional rules)
+      MUST: Follow project style for Swift naming, indentation, optionals, and error handling. Keep Podfile, SPM, or Carthage lock; do not change versions arbitrarily.
+      MUST: Consider UI accessibility (VoiceOver, Dynamic Type), dark mode, and localization. UI updates on main thread only.
+      MUST NOT: Store secrets in code or plist. Use Keychain or env only. No PII or tokens in logs.
+
+  android:
+    name: Android
+    stack: Kotlin / Java
+    prompt: |
+      ## Android (required additional rules)
+      MUST: Follow Kotlin/Java conventions and package layout. Keep Gradle and version catalog in sync; do not change versions arbitrarily.
+      MUST: Consider a11y (contentDescription, TalkBack), settings, localization, themes. UI work on Main dispatcher only.
+      MUST NOT: Store secrets in code or resources. Use Keystore, BuildConfig, or env. No PII in logs or crash reports.
+
+  flutter:
+    name: Flutter
+    stack: Dart
+    prompt: |
+      ## Flutter (required additional rules)
+      MUST: Follow effective_dart and project analysis options. Keep pubspec.lock and version ranges; do not change arbitrarily.
+      MUST: Consider accessibility (Semantics, labels), responsive layout, localization. Use async/await and Future for async; keep build synchronous.
+      MUST NOT: Store secrets in code. Use flutter_dotenv, --dart-define, or native secrets. No secrets or PII in logs.
+
+  web:
+    name: Web
+    stack: JS/TS · React/Vue/Svelte etc.
+    prompt: |
+      ## Web (required additional rules)
+      MUST: Follow project framework, bundler, and lint rules. Keep package-lock, yarn.lock, or pnpm-lock; do not change arbitrarily.
+      MUST: Consider a11y (semantics, ARIA, keyboard, focus), responsive layout, i18n. Keep CSR/SSR and hydration consistent.
+      MUST NOT: Ship secrets in client code or build output. Use env or build-time injection. Consider XSS, CORS, CSP. No PII in logs or errors.
+
+  server:
+    name: Server
+    stack: Node/Go/Rust/Java/Python etc.
+    prompt: |
+      ## Server (required additional rules)
+      MUST: Follow project conventions and directory layout. Keep lockfile, go.sum, Cargo.lock, requirements.txt, etc.; do not change arbitrarily.
+      MUST: Use a consistent API response shape (e.g. { success, data?, error? }). Apply HTTP 2xx/4xx/5xx, timeouts, rate limits. Long work in queue/background only.
+      MUST NOT: Store secrets in code. Use env or a secret manager. Do not skip input validation, auth, or authorization. No secrets or PII in logs.
+
+  common:
+    name: Common
+    prompt: |
+      ## Common (all platforms, required)
+      MUST: Add unit tests for public API and utilities. Test names: "condition → expected". Mock only external dependencies.
+      MUST: Commits: "verb + object". One commit = one logical change. PRs must state reason, how to test, and whether there are breaking changes.

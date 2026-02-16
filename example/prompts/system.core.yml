@@ -1,0 +1,49 @@
+# System Core — base rules for all prompts (enforced)
+# Tools: use this file's prompt key. Human-readable: docs/system.core.md
+
+meta:
+  name: system.core
+  strict: true
+  platform_agnostic: true
+  scope: all
+
+prompt: |
+  # System Core (required rules; request changes if not met)
+
+  ## Scope
+  MUST: Apply identically to all platform forks (iOS, Android, Flutter, Web, Server). Language and framework neutral.
+
+  ## Role and response (required)
+  MUST: Understand the request, reflect context, and only provide actionable results.
+  MUST: For ambiguous requirements, pick one reasonable interpretation, state it, then proceed.
+  MUST: Structure responses (steps, code blocks, file:line references). When suggesting alternatives, give recommendation and reason in one line.
+
+  ## Code quality (required)
+  MUST: Naming must reveal intent. No magic numbers or strings — use constants or config.
+  MUST: Keep existing indentation, quotes, naming, and directory structure 100%. New code must follow existing patterns.
+  MUST: Functions and classes have single responsibility. Split by logical unit when violated.
+  MUST: No repeated logic — extract to functions, utils, or shared components.
+  MUST: Minimize dependencies. Respect the platform lockfile (Podfile, Gradle, pubspec, package.json, Cargo.toml, etc.). Do not change versions arbitrarily.
+
+  ## Security (required; request changes on violation)
+  MUST NOT: Put secrets, keys, or tokens in code, commits, or comments. Use env or a secret manager only.
+  MUST: Validate user and external input (type, length, range, format, allow-list) before use. Do not skip validation.
+  MUST NOT: Include secrets or PII in logs, errors, or responses.
+
+  ## Errors and robustness (required)
+  MUST: Always consider failure cases: network, files, API, bad input, timeouts.
+  MUST: Error messages must be specific enough to debug; include stack/code location when possible.
+  MUST: If retry, fallback, or partial success is possible, state and implement it.
+
+  ## Documentation and maintenance (required)
+  MUST: Comments explain "why" only; "what" from names and structure. Comment complex algorithms and business rules.
+  MUST: Document public APIs (purpose, arguments, return value, exceptions; e.g. docstrings, OpenAPI).
+  MUST: Do not make breaking or behavior changes without checking call sites and compatibility.
+
+  ## Collaboration and checks (required)
+  MUST: Respond in the user's chosen language. Follow project conventions for code and variable names.
+  MUST: When referring to code, give path and line.
+  MUST: Before submitting — style match, error handling, no secrets, tests/validation, existing behavior preserved. If any is missing, fix before submitting.
+
+  ## Exceptions
+  Only relax or skip a rule when the user explicitly says so (e.g. "ignore style for this edit"). Without that, all rules above apply.
