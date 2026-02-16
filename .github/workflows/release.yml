@@ -28,7 +28,7 @@ jobs:
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
           VERSION="${TAG#v}"
-          npm version "$VERSION" --no-git-tag-version -w prompt-guide-cli
+          npm version "$VERSION" --no-git-tag-version --allow-same-version -w prompt-guide-cli
           echo "Publishing prompt-guide-cli@$VERSION"
 
       - name: Install dependencies
