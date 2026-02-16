@@ -13,9 +13,9 @@
 ## Scope
 
 - [ ] CLI (`cli/`)
-- [ ] Config / Prompts (`ai/`, `prompts/`)
+- [ ] Config / Prompts (`prompt.config.js`, `prompts/`)
 - [ ] Docs (`docs/`)
-- [ ] Templates (shipped `ai/`, `prompts/`, `docs/` content)
+- [ ] Templates (shipped `prompts/`, `docs/` content)
 - [ ] CI / GitHub (`.github/`)
 
 ## How did you test this change?

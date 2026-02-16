@@ -20,7 +20,7 @@ body:
     attributes:
       label: Proposed solution
       description: Describe the feature or change you'd like
-      placeholder: "e.g. Add a new CLI command that ... / Support ... in ai.config.yml"
+      placeholder: "e.g. Add a new CLI command that ... / Support ... in prompt.config.js"
     validations:
       required: true
   - type: dropdown
@@ -30,9 +30,9 @@ body:
       description: Where does this apply?
       options:
         - CLI (init, doctor, commands)
-        - Config (ai.config.yml, prompts)
+        - Config (prompt.config.js, prompts)
         - Docs
-        - Templates (ai/, prompts/, docs/ content)
+        - Templates (prompts/, docs/ content)
         - Other
     validations:
       required: true

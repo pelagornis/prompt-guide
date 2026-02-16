@@ -8,8 +8,10 @@
     "cli"
   ],
   "scripts": {
-    "build": "npm run build -w prompt-guide-cli",
+    "build": "npm run build -w @pelagornis/prompt-guide",
     "init": "node cli/bin/cli.js init",
-    "cli": "FORCE_COLOR=1 node cli/bin/cli.js"
+    "cli": "FORCE_COLOR=1 node cli/bin/cli.js",
+    "example:install": "cd example && node ../cli/bin/cli.js install",
+    "example:doctor": "cd example && node ../cli/bin/cli.js doctor"
   }
 }
