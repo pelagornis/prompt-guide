@@ -18,7 +18,7 @@ Thumbs.db
 .env.*
 !.env.example
 # Local config overrides
-ai/ai.config.local.yml
+prompt.config.local.js
 *.local.yml
 # Logs / temp
 *.log

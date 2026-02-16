@@ -12,7 +12,6 @@ Thumbs.db
 .env.*
 !.env.example
 # Local config overrides
-ai/ai.config.local.yml
 *.local.yml
 # Logs / temp
 *.log

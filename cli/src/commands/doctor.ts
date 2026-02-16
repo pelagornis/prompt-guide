@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import chalk from 'chalk';
 import type { Platform } from '../schemas.js';
+import { findConfigPath, loadPromptConfig } from '../lib/load-config.js';
 import { mergeGitignore } from '../lib/gitignore.js';
 
 const GITIGNORE_MARKER = '# prompt-guide (added by prompt-guide-cli)';
@@ -11,13 +12,16 @@ const BAR = chalk.dim('  ' + '─'.repeat(44));
 
 export type DoctorResult = { ok: boolean; message: string; hint?: string };
 
-function getPlatformFromConfig(cwd: string): Platform {
-  const configPath = path.join(cwd, 'ai', 'ai.config.yml');
-  if (!fs.existsSync(configPath)) return 'web';
-  const content = fs.readFileSync(configPath, 'utf8');
-  const m = content.match(/^platform:\s*(\w+)/m);
-  const value = m?.[1]?.toLowerCase();
-  return value && PLATFORMS.includes(value as Platform) ? (value as Platform) : 'web';
+function getPlatformFromCwd(cwd: string): Platform {
+  const configPath = findConfigPath(cwd);
+  if (!configPath) return 'web';
+  try {
+    const config = loadPromptConfig(cwd);
+    const p = (config.platform || 'web').toLowerCase();
+    return PLATFORMS.includes(p as Platform) ? (p as Platform) : 'web';
+  } catch {
+    return 'web';
+  }
 }
 
 export function runDoctor(
@@ -27,33 +31,21 @@ export function runDoctor(
 ): { results: DoctorResult[]; allOk: boolean; fixed: string[] } {
   const fixed: string[] = [];
   const results: DoctorResult[] = [];
-  const aiDir = path.join(cwd, 'ai');
-  const configPath = path.join(cwd, 'ai', 'ai.config.yml');
+  const configPath = findConfigPath(cwd);
   const promptsDir = path.join(cwd, 'prompts');
   const docsDir = path.join(cwd, 'docs');
   const gitignorePath = path.join(cwd, '.gitignore');
 
-  if (!fs.existsSync(aiDir)) {
-    results.push({ ok: false, message: 'ai/ directory missing', hint: 'Run: prompt-guide init' });
-  } else {
-    results.push({ ok: true, message: 'ai/ directory exists' });
-  }
-
-  if (!fs.existsSync(configPath)) {
-    results.push({ ok: false, message: 'ai/ai.config.yml missing', hint: 'Run: prompt-guide init' });
-  } else {
-    const content = fs.readFileSync(configPath, 'utf8');
-    const hasPlatform = /^platform:\s*(\w+|null)/m.test(content);
-    const hasContext = /^context:/m.test(content) || /context:\s*\n/m.test(content);
-    if (!hasPlatform || !hasContext) {
-      results.push({
-        ok: false,
-        message: 'ai/ai.config.yml invalid or incomplete',
-        hint: 'Should contain "platform:" and "context:"',
-      });
-    } else {
-      results.push({ ok: true, message: 'ai/ai.config.yml valid' });
+  if (configPath) {
+    try {
+      const config = loadPromptConfig(cwd);
+      const tool = config.tool || 'cursor';
+      results.push({ ok: true, message: `prompt.config.js exists (tool=${tool})` });
+    } catch {
+      results.push({ ok: false, message: 'prompt.config.js invalid or failed to load', hint: 'Fix exports or run: prompt-guide init' });
     }
+  } else {
+    results.push({ ok: false, message: 'prompt.config.js not found', hint: 'Run: prompt-guide init' });
   }
 
   if (!fs.existsSync(promptsDir)) {
@@ -70,7 +62,7 @@ export function runDoctor(
 
   if (!fs.existsSync(gitignorePath)) {
     if (fix) {
-      const platform = getPlatformFromConfig(cwd);
+      const platform = getPlatformFromCwd(cwd);
       mergeGitignore(cwd, platform);
       fixed.push('.gitignore (created)');
       results.push({ ok: true, message: '.gitignore created with prompt-guide block (--fix)' });
@@ -85,7 +77,7 @@ export function runDoctor(
     const content = fs.readFileSync(gitignorePath, 'utf8');
     if (!content.includes(GITIGNORE_MARKER)) {
       if (fix) {
-        const platform = getPlatformFromConfig(cwd);
+        const platform = getPlatformFromCwd(cwd);
         const { updated } = mergeGitignore(cwd, platform);
         if (updated) {
           fixed.push('.gitignore');

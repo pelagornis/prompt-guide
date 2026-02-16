@@ -11,12 +11,12 @@ const pkgRoot = path.join(__dirname, '..', '..');
 const repoRoot = path.join(pkgRoot, '..');
 
 /**
- * Directory that contains ai/, prompts/, docs/.
- * - In repo: repo root (./ai, ./docs, ./prompts).
- * - When published: package root has ai/, docs/, prompts/ (copied by prepublishOnly).
+ * Directory that contains prompts/, docs/ (and optionally .cursor/).
+ * - When published: package root has docs/, prompts/ (copied by prepublishOnly).
+ * - In repo: repo root if cli/ has no prompts/ yet.
  */
 export function getTemplatesDir(): string {
-  if (fs.existsSync(path.join(pkgRoot, 'ai'))) return pkgRoot;
+  if (fs.existsSync(path.join(pkgRoot, 'prompts'))) return pkgRoot;
   return repoRoot;
 }
 
