@@ -1,5 +1,5 @@
 {
-  "name": "prompt-guide-cli",
+  "name": "@pelagornis/prompt-guide",
   "version": "1.0.0",
   "description": "Initialize prompt-guide in any project: pick platform, copy config, set .gitignore",
   "type": "module",

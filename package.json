@@ -1,5 +1,5 @@
 {
-  "name": "@pelagornis/prompt-guide",
+  "name": "root",
   "version": "1.0.0",
   "private": true,
   "description": "Config-driven prompt guide for AI-assisted coding (YAML + CLI)",
