@@ -95,8 +95,8 @@ prompt-guide init [options]
 
 | Option | Short | Description |
 |--------|-------|-------------|
-| `--platform <platform>` | `-p` | Platform. If omitted, chosen interactively (1–5 or name) when stdin is a TTY. |
-| `--tool <tool>` | `-t` | AI tool (cursor, claude, codex, windsurf, other). If omitted, chosen interactively when stdin is a TTY. |
+| `--platform <platform>` | `-p` | Platform. If omitted, chosen interactively (arrow keys) when stdin is a TTY. |
+| `--tool <tool>` | `-t` | AI tool (cursor, claude, codex, windsurf, other). If omitted, chosen interactively (arrow keys) when stdin is a TTY. |
 | `--dry-run` | — | Do not write files; only print what would be done. |
 | `-y`, `--yes` | — | Non-interactive: use default platform (web) and tool (cursor) when omitted. Also used when stdin is not a TTY (e.g. scripts, CI). |
 
