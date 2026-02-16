@@ -115,22 +115,22 @@ export function runInstall(options: InstallOptions = {}): void {
     case 'cursor':
       writeCursorRules(cwd, config, systemPrompt, reviewPrompt);
       console.log(chalk.green('  ✓') + ' .cursor/rules/use-prompt-guide.mdc');
-      console.log(chalk.dim('  → 설정은 prompt.config.js, prompts/ 만 수정하세요. 다시 install 할 필요 없습니다 (tool 바꿀 때만).'));
+      console.log(chalk.dim('  → Edit only prompt.config.js and prompts/. Re-run install only when you change tool.'));
       break;
     case 'codex':
       writeCodexAgentsMd(cwd, systemPrompt, reviewPrompt);
       console.log(chalk.green('  ✓') + ' AGENTS.md');
-      console.log(chalk.dim('  → 설정 바꾼 뒤엔 다시 prompt-guide install 하세요.'));
+      console.log(chalk.dim('  → Re-run prompt-guide install after changing config.'));
       break;
     case 'windsurf':
       writeWindsurfRules(cwd, systemPrompt);
       console.log(chalk.green('  ✓') + ' .windsurfrules');
-      console.log(chalk.dim('  → 설정 바꾼 뒤엔 다시 prompt-guide install 하세요.'));
+      console.log(chalk.dim('  → Re-run prompt-guide install after changing config.'));
       break;
     case 'claude':
       writeClaudeRules(cwd, systemPrompt, reviewPrompt);
       console.log(chalk.green('  ✓') + ' .claude/rules/prompt-guide-core.md, prompt-guide-review.md');
-      console.log(chalk.dim('  → 설정 바꾼 뒤엔 다시 prompt-guide install 하세요.'));
+      console.log(chalk.dim('  → Re-run prompt-guide install after changing config.'));
       break;
     default:
       console.log(chalk.dim('  · tool=') + chalk.cyan(tool) + chalk.dim(' — no tool-specific files. Edit prompt.config.js and use it as reference.'));

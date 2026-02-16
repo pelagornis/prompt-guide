@@ -1,5 +1,5 @@
 /**
- * Prompt Guide config — 테스트용 샘플 (example 폴더)
+ * Prompt Guide config — sample for testing (example folder)
  * Run `prompt-guide install` to generate tool-specific rules.
  */
 module.exports = {
