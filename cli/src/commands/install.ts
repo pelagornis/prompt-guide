@@ -5,6 +5,8 @@ import { loadPromptConfig, type PromptConfig } from '../lib/load-config.js';
 import { readPromptFromYaml } from '../lib/read-prompts.js';
 
 const BAR = chalk.dim('  ' + '─'.repeat(44));
+const CODEC_AGENTS_MAX_BYTES = 32 * 1024;
+const WINDSURF_MAX_CHARS = 6000;
 
 function writeCursorRules(cwd: string, config: PromptConfig, systemPrompt: string, reviewPrompt: string): void {
   const dir = path.join(cwd, '.cursor', 'rules');
@@ -37,32 +39,25 @@ This project uses prompt-guide. Full config: \`prompt.config.js\` and \`prompts/
 Below: system core and review criteria (concise). Do not exceed ~32 KiB total.
 
 ---
-
-## System core (required rules)
-
 `;
   const core = systemPrompt.length > 12000 ? systemPrompt.slice(0, 12000) + '\n\n...(see prompts/system.core.yml for full text)' : systemPrompt;
-  const reviewSection = `
-
----
-
-## Review criteria
-
-`;
   const review = reviewPrompt.length > 8000 ? reviewPrompt.slice(0, 8000) + '\n\n...(see prompts/review.yml for full)' : reviewPrompt;
-  const full = intro + core + reviewSection + review;
+  let full = intro + core + '\n\n---\n\n' + review;
+  if (Buffer.byteLength(full, 'utf8') > CODEC_AGENTS_MAX_BYTES) {
+    full = full.slice(0, CODEC_AGENTS_MAX_BYTES - 80) + '\n\n...(truncated to fit Codex ~32 KiB limit)';
+  }
   fs.writeFileSync(filePath, full);
 }
 
 function writeWindsurfRules(cwd: string, systemPrompt: string): void {
   const filePath = path.join(cwd, '.windsurfrules');
-  const maxLen = 6000;
-  const condensed = systemPrompt.replace(/\n{2,}/g, '\n').slice(0, maxLen - 200);
-  const content = `# Prompt Guide — rules (from prompt.config.js / prompts)
-# Edit prompt.config.js and run \`prompt-guide install\` to regenerate.
-
-${condensed}${systemPrompt.length > maxLen - 200 ? '\n\n...(truncated; see prompts/system.core.yml)' : ''}
-`;
+  const note = 'Regenerate: prompt-guide install. Edit prompt.config.js and prompts/.\n\n';
+  const reserved = note.length + 60;
+  const condensed = systemPrompt.replace(/\n{2,}/g, '\n').slice(0, WINDSURF_MAX_CHARS - reserved);
+  const content =
+    note +
+    condensed +
+    (systemPrompt.length > WINDSURF_MAX_CHARS - reserved ? '\n\n...(truncated; see prompts/system.core.yml)' : '');
   fs.writeFileSync(filePath, content);
 }
 
@@ -71,10 +66,10 @@ function writeClaudeRules(cwd: string, systemPrompt: string, reviewPrompt: strin
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
   const corePath = path.join(dir, 'prompt-guide-core.md');
-  fs.writeFileSync(corePath, `# System core (prompt-guide)\n\n${systemPrompt}`);
+  fs.writeFileSync(corePath, systemPrompt);
 
   const reviewPath = path.join(dir, 'prompt-guide-review.md');
-  fs.writeFileSync(reviewPath, `# Review criteria (prompt-guide)\n\n${reviewPrompt}`);
+  fs.writeFileSync(reviewPath, reviewPrompt);
 }
 
 export type InstallOptions = { dryRun?: boolean; verbose?: boolean };
@@ -111,25 +106,34 @@ export function runInstall(options: InstallOptions = {}): void {
     return;
   }
 
+  const verbose = options.verbose === true;
+
   switch (tool) {
     case 'cursor':
       writeCursorRules(cwd, config, systemPrompt, reviewPrompt);
       console.log(chalk.green('  ✓') + ' .cursor/rules/use-prompt-guide.mdc');
+      if (verbose) console.log(chalk.dim('    ') + path.join(cwd, '.cursor', 'rules', 'use-prompt-guide.mdc'));
       console.log(chalk.dim('  → Edit only prompt.config.js and prompts/. Re-run install only when you change tool.'));
       break;
     case 'codex':
       writeCodexAgentsMd(cwd, systemPrompt, reviewPrompt);
       console.log(chalk.green('  ✓') + ' AGENTS.md');
+      if (verbose) console.log(chalk.dim('    ') + path.join(cwd, 'AGENTS.md'));
       console.log(chalk.dim('  → Re-run prompt-guide install after changing config.'));
       break;
     case 'windsurf':
       writeWindsurfRules(cwd, systemPrompt);
       console.log(chalk.green('  ✓') + ' .windsurfrules');
+      if (verbose) console.log(chalk.dim('    ') + path.join(cwd, '.windsurfrules'));
       console.log(chalk.dim('  → Re-run prompt-guide install after changing config.'));
       break;
     case 'claude':
       writeClaudeRules(cwd, systemPrompt, reviewPrompt);
       console.log(chalk.green('  ✓') + ' .claude/rules/prompt-guide-core.md, prompt-guide-review.md');
+      if (verbose) {
+        console.log(chalk.dim('    ') + path.join(cwd, '.claude', 'rules', 'prompt-guide-core.md'));
+        console.log(chalk.dim('    ') + path.join(cwd, '.claude', 'rules', 'prompt-guide-review.md'));
+      }
       console.log(chalk.dim('  → Re-run prompt-guide install after changing config.'));
       break;
     default:

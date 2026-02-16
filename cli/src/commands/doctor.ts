@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import type { Platform } from '../schemas.js';
 import { findConfigPath, loadPromptConfig } from '../lib/load-config.js';
 import { mergeGitignore } from '../lib/gitignore.js';
+import { readPromptFromYaml } from '../lib/read-prompts.js';
 
 const GITIGNORE_MARKER = '# prompt-guide (added by prompt-guide-cli)';
 const PLATFORMS: Platform[] = ['ios', 'android', 'flutter', 'web', 'server'];
@@ -41,6 +42,23 @@ export function runDoctor(
       const config = loadPromptConfig(cwd);
       const tool = config.tool || 'cursor';
       results.push({ ok: true, message: `prompt.config.js exists (tool=${tool})` });
+      // Check that prompt files referenced in config exist
+      const defaultPath = config.prompts?.default ?? 'prompts/system.core.yml';
+      const reviewPath = config.prompts?.review ?? 'prompts/review.yml';
+      for (const [label, relPath] of [
+        ['prompts.default', defaultPath],
+        ['prompts.review', reviewPath],
+      ] as const) {
+        try {
+          readPromptFromYaml(cwd, relPath);
+        } catch {
+          results.push({
+            ok: false,
+            message: `Prompt file missing: ${relPath}`,
+            hint: `Create the file or fix ${label} in prompt.config.js`,
+          });
+        }
+      }
     } catch {
       results.push({ ok: false, message: 'prompt.config.js invalid or failed to load', hint: 'Fix exports or run: prompt-guide init' });
     }

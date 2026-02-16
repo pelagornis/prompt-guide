@@ -43,5 +43,10 @@ export function loadPromptConfig(cwd: string): PromptConfig {
   if (!config.tool || typeof config.tool !== 'string') {
     throw new Error('prompt.config.js must set "tool" (cursor | claude | codex | windsurf | other).');
   }
+  const tool = config.tool.toLowerCase();
+  const allowed = ['cursor', 'claude', 'codex', 'windsurf', 'other'];
+  if (!allowed.includes(tool)) {
+    throw new Error(`prompt.config.js "tool" must be one of: ${allowed.join(', ')}. Got: ${config.tool}`);
+  }
   return config;
 }
