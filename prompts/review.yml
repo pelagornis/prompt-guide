@@ -1,5 +1,5 @@
-# Code Review — system.core 전제, 동일 강제 기준
-# 도구: 이 파일의 prompt 키 사용. 사람 읽기: docs/review.md
+# Code Review — same strict criteria, assumes system.core
+# Tools: use this file's prompt key. Human-readable: docs/review.md
 
 meta:
   name: review
@@ -7,22 +7,22 @@ meta:
   platform_agnostic: true
 
 prompt: |
-  # Review (필수 기준, 플랫폼 무관)
+  # Review (required criteria, platform agnostic)
 
-  ## 범위 (필수 검사 대상)
-  MUST: diff 전체, 신규 의존성, 설정·env 변경 전부 검토.
+  ## Scope (required review targets)
+  MUST: Review all of — full diff, new dependencies, config and env changes.
 
-  ## 체크리스트 (항목별로 위반만 파일:라인·구체 내용 기입, 통과 항목은 생략)
-  1. 일관성: 기존 네이밍·스타일·디렉터리·패턴·플랫폼 관례(iOS/Android/Flutter/Web/Server) 100% 일치. 불일치 시 반드시 지적.
-  2. 품질: 단일 책임·중복 없음·매직값 상수화·고복잡도 구간 설명 유무. 미충족 시 수정 요청.
-  3. 보안: 비밀/키/토큰 코드·로그 노출 여부, 입력 검증(타입·범위·포맷) 필수. 위반 시 반드시 수정 요청.
-  4. 에러: 실패 시나리오·타임아웃·재시도 고려, 에러 메시지 구체성. 미고려 시 지적.
-  5. 호환: 기존 API·동작 훼손 여부, 마이그레이션·설정 변경 필요 시 명시 여부. 훼손·미명시 시 수정 요청.
+  ## Checklist (per item: report only violations as file:line and concrete description; omit passing items)
+  1. Consistency: 100% match to existing naming, style, layout, patterns, and platform conventions (iOS/Android/Flutter/Web/Server). Call out any mismatch.
+  2. Quality: Single responsibility, no duplication, magic values in constants, complex areas explained. Request changes if not met.
+  3. Security: No secrets/keys/tokens in code or logs; input validation (type, range, format) required. Request changes on violation.
+  4. Errors: Failure cases, timeouts, retries considered; error messages specific. Call out if missing.
+  5. Compatibility: No breaking existing API or behavior; migration or config changes documented when needed. Request changes if broken or undocumented.
 
-  ## 출력 형식 (필수)
-  MUST: 요약 1~2문장 (승인/조건부 승인/수정 후 재검토).
-  MUST: 위반 항목만 위 순서대로 파일:라인+구체 내용.
-  MUST: 수정 제안 있으면 코드 스니펫 또는 단계로 제시.
-  SHOULD: 잘된 점 1~2줄.
+  ## Output format (required)
+  MUST: Summary in 1–2 sentences (Approve / Conditional approve / Request changes).
+  MUST: Only violated items, in the order above, as file:line and concrete description.
+  MUST: If you have a fix to suggest, give a code snippet or steps.
+  SHOULD: One or two lines on what’s good.
 
-  미준수 항목이 1개라도 있으면 "수정 후 재검토"로 결론. 전 항목 통과 시에만 "승인".
+  If any item is not satisfied, conclude "Request changes". Only conclude "Approve" when all items pass.

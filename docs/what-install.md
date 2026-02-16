@@ -1,114 +1,114 @@
-# What Installs What — 기능별 추가 내용
+# What Installs What — Feature overview
 
-어떤 기능(CLI·설정·프리셋·플랫폼)이 **무엇을 추가하고**, **나중에 처리할 때** 어떻게 바꾸면 되는지 정리한 문서입니다.  
-**모든 프로젝트**(언어·프레임워크 무관)에서 동일한 구조로 사용할 수 있습니다.
+This document explains **what each part** (CLI, config, presets, platforms) **adds** and **what to change when** you need to adjust behavior.  
+The same structure works for **any project** (language and framework agnostic).
 
-**CLI 상세 사용법**은 [docs/CLI.md](CLI.md)를 참고하세요.
-
----
-
-## 0. CLI 명령 요약
-
-| 명령 | 설명 |
-|------|------|
-| `prompt-guide init` | 현재 디렉터리에 ai/, prompts/, docs/ 설치 및 플랫폼별 .gitignore 추가. `-p <platform>` 또는 대화형 선택. |
-| `prompt-guide init --dry-run` | 실제 쓰기 없이 할 작업만 출력. |
-| `prompt-guide doctor` | ai/, config, prompts/, docs/, .gitignore 존재·유효성 점검. |
-| `prompt-guide doctor --fix` | .gitignore에 prompt-guide 블록이 없으면 자동으로 추가(또는 .gitignore 생성). |
+**CLI details**: see [docs/CLI.md](CLI.md).
 
 ---
 
-## 1. 설치 시 추가되는 것 (CLI `init` 또는 수동 복사)
+## 0. CLI command summary
 
-| 추가되는 경로 | 설명 | 누가 추가 |
-|---------------|------|-----------|
-| **ai/ai.config.yml** | 모델·컨텍스트·시스템 역할·태스크 프리셋·플랫폼·규칙 설정. **전체 동작의 기준.** | CLI init / 수동 복사 |
-| **prompts/system.core.yml** | 기본 규칙 원문(YAML). 도구는 `prompt` 키를 주입. | CLI init / 수동 복사 |
-| **prompts/review.yml** | 리뷰용 규칙 원문. `prompt` 키 사용. | CLI init / 수동 복사 |
-| **prompts/rules.by-platform.yml** | 플랫폼별 추가 규칙(ios·android·flutter·web·server·common). `platforms.<이름>.prompt` | CLI init / 수동 복사 |
-| **prompts/guide.template.yml** | 작업용 프롬프트 템플릿 필드 정의. | CLI init / 수동 복사 |
-| **docs/system.core.md** | 기본 규칙 요약(사람 읽기용). | CLI init / 수동 복사 |
-| **docs/review.md** | 리뷰 기준 요약. | CLI init / 수동 복사 |
-| **docs/rules-by-platform.md** | 플랫폼별 규칙 요약. | CLI init / 수동 복사 |
-| **.gitignore** (추가 블록) | 공통 + **선택한 플랫폼**에 맞는 ignore 패턴. | CLI init (플랫폼별로 다름) |
-
-CLI로 설치 시 **플랫폼을 고르면** `ai.config.yml`의 `platform`이 설정되고, `.gitignore`에 해당 플랫폼용 패턴이 붙습니다.
+| Command | Description |
+|---------|-------------|
+| `prompt-guide init` | Install ai/, prompts/, docs/ in the current directory and add platform-specific .gitignore. Use `-p <platform>` or interactive choice. |
+| `prompt-guide init --dry-run` | Show what would be done without writing files. |
+| `prompt-guide doctor` | Check presence and validity of ai/, config, prompts/, docs/, .gitignore. |
+| `prompt-guide doctor --fix` | Create or append the prompt-guide block in .gitignore when missing. |
 
 ---
 
-## 2. ai.config.yml — 섹션별로 추가·제어하는 것
+## 1. What gets added on install (CLI `init` or manual copy)
 
-| 섹션 | 추가·제어 내용 | 나중에 바꿀 때 |
-|------|----------------|----------------|
-| **model** | 기본 모델·옵션 목록. | `model.default`, `model.options` 수정. 프리셋별로 쓰는 모델은 `task_presets.<이름>.model` 추가. |
-| **context** | 어떤 경로를 컨텍스트로 넣을지(include)·제외할지(exclude), max_files·max_tokens. | 프로젝트 구조에 맞게 `include`/`exclude` 수정. |
-| **system_role** | 시스템 역할(기본 품질·보안·에러 등)을 정의하는 파일. | 보통 유지. 바꾸려면 `system_role`이 가리키는 YAML의 `prompt` 수정. |
-| **prompts** | default·review 등 이름별 프롬프트 파일. | 새 이름 추가하거나 경로 변경. |
-| **task_presets** | 태스크별로 쓰는 프롬프트·추가 규칙·모델. | 새 프리셋 추가, 기존의 `prompt`/`rules_extra`/`model` 수정. |
-| **platform** | 현재 플랫폼(ios|android|flutter|web|server). null이면 플랫폼 병합 안 함. | `platform: ios` 등으로 바꾸면 아래 플랫폼 설정이 적용됨. |
-| **platforms** | 플랫폼별 context.include·rules_key(어떤 규칙 블록 쓸지). | `platforms.<id>.context.include`를 프로젝트 경로에 맞게 수정. |
-| **rules** | 전역 규칙(no_auto_scan, strict, cite_sources 등). | 도구가 지원하면 여기서 켜고 끔. |
+| Path | Description | Added by |
+|------|-------------|----------|
+| **ai/ai.config.yml** | Model, context, system role, task presets, platform, rules. **Single source of behavior.** | CLI init / manual copy |
+| **prompts/system.core.yml** | Core rules (YAML). Tools inject the `prompt` key. | CLI init / manual copy |
+| **prompts/review.yml** | Review rules. Uses `prompt` key. | CLI init / manual copy |
+| **prompts/rules.by-platform.yml** | Per-platform rules (ios, android, flutter, web, server, common). `platforms.<name>.prompt` | CLI init / manual copy |
+| **prompts/guide.template.yml** | Task prompt template field definitions. | CLI init / manual copy |
+| **docs/system.core.md** | Core rules summary (human-readable). | CLI init / manual copy |
+| **docs/review.md** | Review criteria summary. | CLI init / manual copy |
+| **docs/rules-by-platform.md** | Per-platform rules summary. | CLI init / manual copy |
+| **.gitignore** (block) | Common + **chosen platform** ignore patterns. | CLI init (varies by platform) |
 
----
-
-## 3. 프롬프트 파일 — 각각 추가하는 규칙
-
-| 파일 | 추가하는 규칙(요약) | 언제 적용되는지 |
-|------|---------------------|------------------|
-| **prompts/system.core.yml** | 역할·응답, 코드 품질, 보안, 에러·견고성, 문서·유지보수, 협업·체크. MUST/MUST NOT. | `system_role`·`prompts.default`·대부분 태스크 프리셋에서 사용. |
-| **prompts/review.yml** | 리뷰 범위, 체크리스트(일관성·품질·보안·에러·호환), 출력 형식, 승인/수정 결론. | `prompts.review`·태스크 프리셋 `review`·`security_audit`에서 사용. |
-| **prompts/rules.by-platform.yml** | 플랫폼별 추가 규칙(iOS·Android·Flutter·Web·Server·공통). | `platform`이 설정된 경우, 해당 `platforms.<id>.rules_key`에 해당하는 `prompt`가 시스템 역할 뒤에 병합됨. |
-| **prompts/guide.template.yml** | 작업용 필드 정의(플랫폼·역할·맥락·작업·제약·출력). | 사람이 복사해 채워서 쓸 때. 도구가 자동 주입하는 건 아님. |
+With the CLI, choosing a **platform** sets `platform` in `ai.config.yml` and appends that platform’s patterns to `.gitignore`.
 
 ---
 
-## 4. 태스크 프리셋 — 선택 시 추가되는 것
+## 2. ai.config.yml — What each section controls
 
-| 프리셋 | 사용하는 프롬프트 | 추가로 붙는 규칙(rules_extra) |
-|--------|-------------------|-------------------------------|
-| **default** | system.core.yml | 없음 (기본만) |
-| **review** | review.yml | 없음 |
-| **refactor** | system.core.yml | 동작 변경 금지·의미 유지, 작은 단위로 한 번에 한 변경. |
-| **implement** | system.core.yml | 스펙/티켓만 구현, 테스트 또는 테스트 계획 추가. |
-| **fix_bug** | system.core.yml | 원인 파악 후 최소 수정, 불필요한 리팩터 금지. |
-| **security_audit** | review.yml | 비밀·입력 검증·인증 경계·로그 내 민감정보만 집중. |
-
-프리셋을 바꾸면 **같은 프로젝트**에서도 “지금 이 작업만” 다른 규칙·프롬프트가 적용됩니다.
-
----
-
-## 5. 플랫폼 — 선택 시 추가·병합되는 것
-
-| 플랫폼 | 추가되는 context.include 예시 | 추가되는 규칙(규칙 파일) |
-|--------|------------------------------|---------------------------|
-| **ios** | ios/**, *.xcodeproj/**, Shared/**, src/** | rules.by-platform → platforms.ios.prompt (Swift·UI·Keychain 등) |
-| **android** | android/**, app/**, lib/**, src/** | platforms.android.prompt (Kotlin·a11y·Keystore 등) |
-| **flutter** | lib/**, ios/**, android/**, test/**, pubspec.yaml | platforms.flutter.prompt (Dart·Semantics·시크릿 등) |
-| **web** | src/**, public/**, app/**, *.config.js 등 | platforms.web.prompt (a11y·XSS·CORS 등) |
-| **server** | src/**, lib/**, app/**, internal/**, cmd/** | platforms.server.prompt (API·시크릿·입력 검증 등) |
-
-`platform: null`이면 위 플랫폼 병합이 적용되지 않고, **context**는 `ai.config.yml` 최상단 `context`만 사용됩니다.
+| Section | What it adds/controls | When changing later |
+|---------|------------------------|----------------------|
+| **model** | Default model and option list. | Edit `model.default`, `model.options`. Add `task_presets.<name>.model` for per-preset model. |
+| **context** | Which paths to include/exclude, max_files, max_tokens. | Adjust `include`/`exclude` to your project layout. |
+| **system_role** | File that defines the system role (quality, security, errors, etc.). | Usually keep. To change, edit the `prompt` in the YAML it points to. |
+| **prompts** | Named prompt files (default, review, etc.). | Add names or change paths. |
+| **task_presets** | Per-task prompt, extra rules, model. | Add presets or edit `prompt`/`rules_extra`/`model`. |
+| **platform** | Current platform (ios \| android \| flutter \| web \| server). null = no platform merge. | Set e.g. `platform: ios` to apply that platform’s config. |
+| **platforms** | Per-platform context.include and rules_key. | Adjust `platforms.<id>.context.include` to your paths. |
+| **rules** | Global rules (no_auto_scan, strict, cite_sources, etc.). | Toggle here if your tool supports them. |
 
 ---
 
-## 6. 나중에 처리할 때 — 시나리오별로 바꾸는 것
+## 3. Prompt files — What each adds
 
-| 하고 싶은 일 | 바꾸면 되는 것 |
-|--------------|----------------|
-| **다른 플랫폼으로 전환** | `ai.config.yml`에서 `platform` 값을 변경. 필요하면 `platforms.<id>.context.include`를 해당 프로젝트 경로에 맞게 수정. |
-| **리뷰만 엄하게** | 리뷰 시 `task_presets.review` 사용(이미 연결됨). 더 세게 하려면 `prompts/review.yml`의 `prompt` 내용 수정. |
-| **컨텍스트 범위 조정** | `context.include`/`context.exclude`를 프로젝트 구조에 맞게 수정. 플랫폼 쓰면 `platforms.<id>.context.include`도 수정. |
-| **모델만 바꾸기** | `model.default` 변경. 특정 태스크만 다른 모델 쓰려면 `task_presets.<이름>.model` 추가. |
-| **새 태스크(에이전트) 추가** | `task_presets`에 새 이름으로 `description`, `prompt`, 필요 시 `rules_extra`·`model` 추가. |
-| **프로젝트 전용 규칙 추가** | `prompts/system.core.yml`의 `prompt`에 문단 추가하거나, 새 YAML 파일 만들고 `system_role`/`prompts`에서 참조. |
+| File | Rules it adds (summary) | When applied |
+|------|-------------------------|--------------|
+| **prompts/system.core.yml** | Role, response, code quality, security, errors, docs, collaboration. MUST/MUST NOT. | Used by `system_role`, `prompts.default`, most task presets. |
+| **prompts/review.yml** | Review scope, checklist (consistency, quality, security, errors, compatibility), output format, approve/request-changes. | Used by `prompts.review`, presets `review`, `security_audit`. |
+| **prompts/rules.by-platform.yml** | Per-platform rules (iOS, Android, Flutter, Web, Server, common). | When `platform` is set, the matching `platforms.<id>.prompt` is merged after the system role. |
+| **prompts/guide.template.yml** | Task template fields (platform, role, context, task, constraints, output). | For humans to copy and fill; not auto-injected by tools. |
 
 ---
 
-## 7. 모든 프로젝트에서 쓰는 방법
+## 4. Task presets — What each adds when selected
 
-- **설치**: CLI 전역 설치 후 `prompt-guide init` 또는 수동으로 `ai/`, `prompts/`, `docs/` 복사. 설치 후 `prompt-guide doctor`로 상태 점검, `.gitignore`만 빠졌다면 `prompt-guide doctor --fix`로 보정.
-- **공통**: `ai.config.yml` + `prompts/system.core.yml` + `prompts/review.yml` + `prompts/rules.by-platform.yml` 구조는 **언어·프레임워크 무관**으로 동일.
-- **프로젝트별로만 바꾸는 것**: `context.include`/`exclude`, `platform`, `platforms.<id>.context.include`, 필요 시 `model.default`·프리셋.
-- **문서**: 규칙 내용은 `docs/system.core.md`, `docs/review.md`, `docs/rules-by-platform.md`에서 확인. CLI 사용법은 `docs/CLI.md`. YAML은 도구가, MD는 사람이 읽는 용도.
+| Preset | Prompt used | Extra rules (rules_extra) |
+|--------|--------------|---------------------------|
+| **default** | system.core.yml | None |
+| **review** | review.yml | None |
+| **refactor** | system.core.yml | No behavior change, preserve semantics; small, single logical change per step. |
+| **implement** | system.core.yml | Implement only what’s specified; add tests or test plan. |
+| **fix_bug** | system.core.yml | Find root cause; minimal fix; no unnecessary refactor. |
+| **security_audit** | review.yml | Focus on secrets, input validation, auth boundaries, sensitive data in logs. |
 
-이 문서는 **룰·문서 설치 후**, “어떤 기능이 뭘 추가했는지”와 “나중에 뭘 바꾸면 되는지”를 한 곳에서 보려고 쓴 것입니다.
+Changing the preset applies **different rules/prompts for that task only** in the same project.
+
+---
+
+## 5. Platforms — What gets merged when selected
+
+| Platform | Example context.include | Rules (from) |
+|----------|-------------------------|--------------|
+| **ios** | ios/**, *.xcodeproj/**, Shared/**, src/** | rules.by-platform → platforms.ios.prompt |
+| **android** | android/**, app/**, lib/**, src/** | platforms.android.prompt |
+| **flutter** | lib/**, ios/**, android/**, test/**, pubspec.yaml | platforms.flutter.prompt |
+| **web** | src/**, public/**, app/**, *.config.js, etc. | platforms.web.prompt |
+| **server** | src/**, lib/**, app/**, internal/**, cmd/** | platforms.server.prompt |
+
+If `platform: null`, no platform merge is applied and only the top-level **context** in `ai.config.yml` is used.
+
+---
+
+## 6. Later changes — What to edit by scenario
+
+| Goal | What to change |
+|------|----------------|
+| **Switch platform** | Change `platform` in `ai.config.yml`. Optionally adjust `platforms.<id>.context.include` for your paths. |
+| **Stricter review** | Use `task_presets.review` (already wired). To tighten, edit `prompt` in `prompts/review.yml`. |
+| **Adjust context scope** | Edit `context.include`/`context.exclude` for your layout; if using a platform, also `platforms.<id>.context.include`. |
+| **Change model only** | Change `model.default`. Add `task_presets.<name>.model` for a specific task. |
+| **Add a task preset** | Add a new entry under `task_presets` with `description`, `prompt`, and optionally `rules_extra`, `model`. |
+| **Project-specific rules** | Add to `prompt` in `prompts/system.core.yml` or add a new YAML and reference it from `system_role`/`prompts`. |
+
+---
+
+## 7. Using this in any project
+
+- **Install**: Run `prompt-guide init` (or copy `ai/`, `prompts/`, `docs/` manually). Then run `prompt-guide doctor`; if only .gitignore is missing, run `prompt-guide doctor --fix`.
+- **Common layout**: `ai.config.yml` + `prompts/system.core.yml` + `prompts/review.yml` + `prompts/rules.by-platform.yml` is the same **for all languages and frameworks**.
+- **Project-specific**: Only `context.include`/`exclude`, `platform`, `platforms.<id>.context.include`, and optionally `model.default` and presets.
+- **Docs**: Rule summaries are in `docs/system.core.md`, `docs/review.md`, `docs/rules-by-platform.md`. CLI usage in `docs/CLI.md`. YAML is for tools; Markdown is for humans.
+
+This document is a single place to see **what each part adds** and **what to change later** after install.

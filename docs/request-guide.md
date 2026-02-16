@@ -1,161 +1,157 @@
-# 요청 리스트 작성 가이드
+# Request list writing guide
 
-AI에게 작업을 맡길 때 **어떻게 요청하면 좋은지** 정리한 문서입니다.  
-프리셋(implement, refactor, fix_bug 등)별로 요청을 어떻게 쓰면 효과적인지, 그리고 `prompts/guide.template.yml` 필드를 어떻게 채우면 되는지 설명합니다.
-
----
-
-## 목차
-
-- [요청 작성 원칙](#요청-작성-원칙)
-- [프리셋별 요청 요령](#프리셋별-요청-요령)
-- [템플릿 필드 가이드 (guide.template.yml)](#템플릿-필드-가이드-guidetemplateyml)
-- [스펙·티켓 작성 (implement용)](#스펙티켓-작성-implement용)
-- [예시](#예시)
+How to **phrase requests** when asking the AI to do work: per-preset tips, how to fill `prompts/guide.template.yml`, and spec/ticket-style requests for the **implement** preset.
 
 ---
 
-## 요청 작성 원칙
+## Table of contents
 
-| 원칙 | 설명 |
-|------|------|
-| **동사로 명확히** | "추가해줘", "수정해줘"보다 "로그인 버튼 클릭 시 API 호출 추가", "이 함수에서 null 체크 추가"처럼 **무엇을 할지** 구체적으로. |
-| **범위 한정** | 한 번에 하나의 논리적 작업. 여러 기능을 묶지 말고, 큰 작업은 단계로 나눠 요청. |
-| **맥락 제공** | 필요한 경우 파일 경로·라인, 사용 중인 스택·플랫폼, 참고할 규칙(예: 플랫폼 규칙)을 한 줄로. |
-| **출력 형식 지정** | "코드만", "설명+코드", "체크리스트 후 코드" 등 원하는 출력 형태를 짧게 명시하면 도움 됨. |
-
----
-
-## 프리셋별 요청 요령
-
-`ai.config.yml`의 **task_presets**에 따라 AI가 쓰는 규칙이 달라집니다. 요청할 때 아래를 참고하면 좋습니다.
-
-### default — 일반 코딩·편집
-
-- **쓰는 경우**: 일상적인 수정, 작은 개선, 리팩터 없이 동작만 바꾸는 경우.
-- **요청 요령**: "이 파일에서 ~ 부분을 ~하게 바꿔줘", "~ 기능 추가해줘"처럼 **대상(파일/함수) + 할 일**을 명시.
-
-### implement — 스펙·티켓 기준 구현
-
-- **쓰는 경우**: 새 기능을 **명세나 티켓 내용 그대로** 구현할 때.
-- **요청 요령**:  
-  - **스펙/티켓 본문을 그대로 붙이거나**,  
-  - "다음 스펙대로 구현해줘" + 조건·입출력·예외를 적어 주기.  
-- **규칙**: 지정한 범위만 구현하고, 테스트 또는 테스트 계획을 함께 요청하는 것이 좋음.
-
-### refactor — 리팩터링
-
-- **쓰는 경우**: 동작은 유지하고 구조·스타일만 바꿀 때.
-- **요청 요령**: "동작 바꾸지 말고 ~만 리팩터해줘", "이 모듈을 ~ 단위로 쪼개줘"처럼 **동작 유지**를 전제로 명시.
-
-### fix_bug — 버그 수정
-
-- **쓰는 경우**: 원인 파악 후 **최소 수정**으로 버그만 고칠 때.
-- **요청 요령**: "~ 할 때 ~가 돼. 원인 찾아서 최소한으로 수정해줘", 재현 조건·예상 동작을 한 줄이라도 적어 주기.
-
-### review — 코드 리뷰
-
-- **쓰는 경우**: diff/PR에 대한 리뷰를 받을 때.
-- **요청 요령**: "이 변경분 리뷰해줘" 또는 "아래 diff 기준으로 체크리스트(일관성·품질·보안·에러·호환) 적용해서 승인/수정 요청 결론만 달아줘".
+- [Request writing principles](#request-writing-principles)
+- [Per-preset request tips](#per-preset-request-tips)
+- [Template field guide (guide.template.yml)](#template-field-guide-guidetemplateyml)
+- [Spec / ticket writing (for implement)](#spec--ticket-writing-for-implement)
+- [Examples](#examples)
 
 ---
 
-## 템플릿 필드 가이드 (guide.template.yml)
+## Request writing principles
 
-`prompts/guide.template.yml`은 **작업용 프롬프트**를 구조화할 때 쓰는 필드 정의입니다.  
-복사해서 값만 채운 뒤, 아래 `prompt_example` 형식으로 조합해 AI에 넘기면 됩니다.
+| Principle | Description |
+|-----------|-------------|
+| **Use clear verbs** | Be specific about what to do (e.g. “Add API call on login button click”, “Add null check in this function”) rather than “add something” or “fix it”. |
+| **Limit scope** | One logical task per request. Split large work into steps. |
+| **Give context** | When useful: file path/line, stack/platform, which rules to follow (e.g. platform rules). |
+| **Specify output format** | Saying “code only”, “explanation + code”, or “checklist then code” helps. |
 
-| 필드 | 설명 | 예시 |
-|------|------|------|
-| **platform** | 대상 플랫폼. | `iOS`, `Web`, `Server` |
-| **role** | AI 역할 한 줄. | "이 저장소 iOS 앱 수정 담당" |
-| **context.project** | 프로젝트/앱 이름·목적. | "회원 로그인 iOS 앱" |
-| **context.path** | 주로 다룰 경로. | `ios/App/`, `src/features/auth/` |
-| **context.stack** | 사용 스택. | "SwiftUI, Combine" / "React, TypeScript" |
-| **context.rules_ref** | 참고 규칙. | "rules.by-platform iOS 블록" |
-| **task** | 할 일. **동사로 명확히**. | "로그인 실패 시 에러 메시지 토스트로 표시 추가" |
-| **constraints** | 제약(선택). | ["기존 API 시그니처 유지", "테스트 추가"] |
-| **output.format** | 출력 형식. | "코드만" / "설명+코드" / "체크리스트 후 코드" |
-| **output.include** | 출력에 포함할 것. | "사용법·테스트 방법·주의사항" |
-| **example** | 참고 예시(선택). | 기존 코드 스니펫이나 비슷한 화면 설명 |
+---
 
-**렌더 예시** (필드 채운 뒤 이렇게 조합):
+## Per-preset request tips
+
+**task_presets** in `ai.config.yml` change which rules the AI uses. Use the following when phrasing requests.
+
+### default — General coding / editing
+
+- **When to use**: Routine edits, small improvements, behavior-only changes without refactor.
+- **How to request**: Name **target (file/function) + task**, e.g. “In this file change ~ to ~”, “Add ~ feature”.
+
+### implement — Implement from spec / ticket
+
+- **When to use**: Implementing a **new feature exactly as specified** in a spec or ticket.
+- **How to request**: Paste the **spec/ticket body** or write “Implement the following spec” plus conditions, I/O, and exceptions.
+- **Rule of thumb**: Request tests or a test plan as well.
+
+### refactor — Refactoring
+
+- **When to use**: Changing structure/style only; behavior stays the same.
+- **How to request**: Explicitly say **behavior must not change**, e.g. “Refactor only ~ without changing behavior”, “Split this module into ~”.
+
+### fix_bug — Bug fix
+
+- **When to use**: **Minimal fix** after finding the cause.
+- **How to request**: Describe what happens and expected behavior, e.g. “When ~, ~ happens. Find the cause and fix with minimal change.” Include repro steps if possible.
+
+### review — Code review
+
+- **When to use**: Reviewing a diff/PR.
+- **How to request**: “Review this change” or “Apply the checklist (consistency, quality, security, errors, compatibility) to the diff below and give approve / request-changes”.
+
+---
+
+## Template field guide (guide.template.yml)
+
+`prompts/guide.template.yml` defines **structured fields** for task prompts. Copy it, fill the values, and combine them in the `prompt_example` format before sending to the AI.
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| **platform** | Target platform. | `iOS`, `Web`, `Server` |
+| **role** | One-line role for the AI. | “Modify the iOS app in this repo” |
+| **context.project** | Project/app name and purpose. | “Member login iOS app” |
+| **context.path** | Paths to work in. | `ios/App/`, `src/features/auth/` |
+| **context.stack** | Stack in use. | “SwiftUI, Combine” / “React, TypeScript” |
+| **context.rules_ref** | Rules to follow. | “rules.by-platform iOS block” |
+| **task** | What to do. **Use a clear verb.** | “Show error message in a toast on login failure” |
+| **constraints** | Optional constraints. | [“Keep existing API signatures”, “Add tests”] |
+| **output.format** | Output format. | “code only” / “explanation + code” / “checklist then code” |
+| **output.include** | What to include in output. | “Usage, how to test, caveats” |
+| **example** | Optional example. | Existing code snippet or similar screen |
+
+**Example** (after filling fields):
 
 ```
-플랫폼: iOS
-역할: 이 저장소 iOS 앱 수정 담당
-맥락: 프로젝트 회원 앱, 경로 ios/App/, 스택 SwiftUI. 참고 규칙: rules.by-platform iOS 블록
-작업: 로그인 실패 시 에러 메시지 토스트로 표시 추가
-제약: 기존 API 시그니처 유지, 테스트 추가
-출력: 형식 설명+코드, 포함 사용법·테스트 방법
-예시: (있으면)
+Platform: iOS
+Role: Modify the iOS app in this repo
+Context: Project member app, path ios/App/, stack SwiftUI. Rules: rules.by-platform iOS block
+Task: Show error message in a toast on login failure
+Constraints: Keep existing API signatures, add tests
+Output: format explanation+code, include usage and how to test
+Example: (if any)
 ```
 
 ---
 
-## 스펙·티켓 작성 (implement용)
+## Spec / ticket writing (for implement)
 
-**implement** 프리셋을 쓸 때는 "무엇을 구현할지"를 짧은 스펙/티켓처럼 적어 주는 것이 좋습니다.
+For the **implement** preset, a short spec or ticket works well.
 
-| 항목 | 내용 |
-|------|------|
-| **기능 요약** | 한 줄로 무엇을 만드는지. |
-| **조건·입력** | 어떤 상황/입력에서 동작하는지. (예: "로그인 실패 시", "이 API가 401을 반환할 때") |
-| **기대 동작** | 사용자/시스템 입장에서 무엇이 일어나야 하는지. |
-| **제약** | 반드시 지켜야 할 것(기존 API 유지, 특정 라이브러리 사용 등). |
-| **테스트** | "단위 테스트 추가" 또는 "이 시나리오로 수동 확인" 등. |
+| Item | Content |
+|------|---------|
+| **Summary** | One line: what you’re building. |
+| **Conditions / input** | When it runs (e.g. “On login failure”, “When this API returns 401”). |
+| **Expected behavior** | What should happen from the user/system perspective. |
+| **Constraints** | Must-haves (e.g. keep existing API, use specific library). |
+| **Tests** | “Add unit tests” or “Verify manually with this scenario”. |
 
-스펙이 길면 본문을 그대로 붙이고, "위 스펙대로 구현해줘. 테스트 추가해줘"처럼 한 줄로 지시만 해도 됩니다.
-
----
-
-## 예시
-
-### 1. implement — 기능 하나 요청
-
-```
-[implement 프리셋 선택]
-
-다음 기능 구현해줘.
-
-- 요약: 로그인 실패 시 사용자에게 토스트로 에러 메시지 표시
-- 조건: AuthAPI가 401 또는 에러 메시지를 반환할 때
-- 기대: 화면 하단 토스트에 서버 메시지 표시, 3초 후 자동 사라짐
-- 제약: 기존 LoginView 구조 유지, 기존 API 호출 코드 재사용
-- 테스트: 실패 시나리오 한 가지 단위 테스트 추가
-```
-
-### 2. refactor — 리팩터만 요청
-
-```
-[refactor 프리셋 선택]
-
-동작은 그대로 두고, ios/App/Login/LoginViewModel.swift 를
-- 네트워크 호출 / 상태 관리 / 입력 검증 역할로 메서드 나눠서 리팩터해줘.
-기존 테스트가 깨지지 않게 해줘.
-```
-
-### 3. fix_bug — 버그만 최소 수정
-
-```
-[fix_bug 프리셋 선택]
-
-로그인 후 홈으로 갈 때 가끔 크래시가 나요. 원인 찾아서 최소한 수정만 해줘.
-재현: 로그인 성공 → 홈 탭 선택 시 (약 10% 확률).
-```
-
-### 4. guide.template 활용 — 한 블록으로 요청
-
-```
-플랫폼: Web
-역할: 이 저장소 프론트엔드 수정 담당
-맥락: 프로젝트 대시보드, 경로 src/features/dashboard/, 스택 React + TypeScript
-작업: 대시보드 상단에 "오늘 할 일" 개수 배지 추가 (기존 API /tasks/count 사용)
-제약: 기존 컴포넌트 재사용, 접근성(a11y) 유지
-출력: 설명+코드, 사용법·테스트 방법 포함
-```
+For long specs, paste the body and add one line like “Implement the above spec. Add tests.”
 
 ---
 
-이 가이드는 **프롬프트 규칙(system.core, review, rules-by-platform)과 함께** 사용할 때 효과가 큽니다.  
-규칙 요약은 [system.core.md](system.core.md), [review.md](review.md), [rules-by-platform.md](rules-by-platform.md)를 참고하세요.
+## Examples
+
+### 1. implement — Single feature
+
+```
+[Select implement preset]
+
+Implement the following:
+
+- Summary: Show error message in a toast when login fails
+- Condition: When AuthAPI returns 401 or an error message
+- Expected: Toast at bottom with server message, auto-dismiss after 3s
+- Constraints: Keep existing LoginView structure, reuse existing API call code
+- Tests: One unit test for the failure scenario
+```
+
+### 2. refactor — Refactor only
+
+```
+[Select refactor preset]
+
+Without changing behavior, refactor ios/App/Login/LoginViewModel.swift
+into separate methods for: network call, state, input validation.
+Ensure existing tests still pass.
+```
+
+### 3. fix_bug — Minimal fix
+
+```
+[Select fix_bug preset]
+
+App sometimes crashes when going to home after login. Find the cause and fix with minimal change.
+Repro: Login success → tap Home tab (roughly 10% of the time).
+```
+
+### 4. Using guide.template — Single block
+
+```
+Platform: Web
+Role: Modify the frontend in this repo
+Context: Project dashboard, path src/features/dashboard/, stack React + TypeScript
+Task: Add an “today’s tasks” count badge at the top of the dashboard (use existing API /tasks/count)
+Constraints: Reuse existing components, keep a11y
+Output: explanation + code, include usage and how to test
+```
+
+---
+
+This guide works best **together with** the prompt rules (system.core, review, rules-by-platform).  
+See [system.core.md](system.core.md), [review.md](review.md), and [rules-by-platform.md](rules-by-platform.md) for rule summaries.

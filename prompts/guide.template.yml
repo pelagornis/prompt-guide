@@ -1,32 +1,32 @@
-# 작업용 프롬프트 템플릿 (system.core + 플랫폼 규칙 적용 전제)
-# 복사 후 values 채워서 AI에 붙여넣기. YAML 그대로 전달하거나 아래 prompt 문자열로 렌더 가능.
+# Task prompt template (assumes system.core + platform rules apply)
+# Copy, fill values, then paste into the AI. Use as YAML or render from the prompt_example below.
 
 meta:
   name: guide.template
   platform_agnostic: true
 
-# 채울 필드 (주석 제거 후 값 입력)
+# Fields to fill (remove comments and enter values)
 fields:
-  platform: "iOS | Android | Flutter | Web | Server | 기타"
-  role: "한 줄 역할, 예: 이 저장소 iOS 앱 수정 담당"
+  platform: "iOS | Android | Flutter | Web | Server | Other"
+  role: "One-line role, e.g. Modify the iOS app in this repo"
   context:
     project: ""
     path: ""
     stack: ""
-    rules_ref: "rules.by-platform 해당 블록 등"
-  task: "동사로 명확히: 구현/수정/검증 대상"
+    rules_ref: "e.g. rules.by-platform block for this platform"
+  task: "Clear verb: what to implement/fix/verify"
   constraints: []
   output:
-    format: "코드만 | 설명+코드 | 체크리스트 등"
-    include: "사용법·테스트·주의사항 등"
+    format: "code only | explanation+code | checklist etc."
+    include: "usage, how to test, caveats etc."
   example: ""
 
-# 렌더 예시 (필드 채운 뒤 이 형식으로 조합해 사용)
+# Render example (combine in this format after filling fields)
 prompt_example: |
-  플랫폼: {{ platform }}
-  역할: {{ role }}
-  맥락: 프로젝트 {{ context.project }}, 경로 {{ context.path }}, 스택 {{ context.stack }}. 참고 규칙: {{ context.rules_ref }}
-  작업: {{ task }}
-  제약: {{ constraints }}
-  출력: 형식 {{ output.format }}, 포함 {{ output.include }}
-  예시: {{ example }}
+  Platform: {{ platform }}
+  Role: {{ role }}
+  Context: project {{ context.project }}, path {{ context.path }}, stack {{ context.stack }}. Rules: {{ context.rules_ref }}
+  Task: {{ task }}
+  Constraints: {{ constraints }}
+  Output: format {{ output.format }}, include {{ output.include }}
+  Example: {{ example }}

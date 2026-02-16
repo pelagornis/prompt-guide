@@ -1,44 +1,44 @@
-# 플랫폼별 추가 규칙 (사람 읽기용)
+# Per-platform rules (human-readable)
 
-실제 주입용 문장은 **YAML**에 있습니다.  
-→ `prompts/rules.by-platform.yml` (도구는 `platforms.<이름>.prompt` 사용)
+The actual text used for injection is in **YAML**.  
+→ `prompts/rules.by-platform.yml` (tools use `platforms.<name>.prompt`)
 
-- **언제 적용되는지**: `ai.config.yml`에서 `platform: ios`(또는 android, flutter, web, server)로 설정된 경우, 해당 플랫폼 블록이 시스템 역할 뒤에 병합됩니다. `platform: null`이면 이 규칙은 적용되지 않습니다.
-- **포크 시**: 대상 플랫폼 블록만 사용. 여러 플랫폼을 쓰는 프로젝트면 블록을 병합해 사용할 수 있습니다.
+- **When applied**: When `platform` in `ai.config.yml` is set to ios, android, flutter, web, or server, that platform’s block is merged after the system role. If `platform: null`, these rules are not applied.
+- **When forking**: Use only the blocks for your target platform(s); merge blocks if the project spans multiple platforms.
 
 ---
 
 ## iOS (Swift / SwiftUI / UIKit)
 
-- Swift 네이밍·들여쓰기·옵셔널·에러 처리는 프로젝트 스타일 가이드 준수. 의존성 Podfile·SPM·Carthage lock 유지. 임의 버전 변경 금지.
-- UI 접근성(VoiceOver·Dynamic Type), 다크모드·다국어 반드시 고려. UI 업데이트는 **메인 스레드만**.
-- 비밀은 코드·plist에 저장 금지. Keychain·env만 사용. 로그에 PII·토큰 포함 금지.
+- Follow project style for Swift naming, indentation, optionals, and error handling. Keep Podfile, SPM, or Carthage lock; do not change versions arbitrarily.
+- Consider accessibility (VoiceOver, Dynamic Type), dark mode, and localization. **UI updates on main thread only.**
+- Do not store secrets in code or plist. Use Keychain or env only. No PII or tokens in logs.
 
 ## Android (Kotlin / Java)
 
-- Kotlin/Java 코딩 컨벤션·패키지 구조 준수. 의존성 Gradle·버전 카탈로그 일치. 임의 버전 변경 금지.
-- a11y(contentDescription·TalkBack), 설정·다국어·테마 반드시 고려. UI 작업은 **Main dispatcher만**.
-- 비밀은 코드·리소스에 저장 금지. Keystore·BuildConfig/환경변수만 사용. 로그·크래시 리포트에 PII 포함 금지.
+- Follow Kotlin/Java conventions and package layout. Keep Gradle and version catalog in sync; do not change versions arbitrarily.
+- Consider a11y (contentDescription, TalkBack), settings, localization, themes. **UI work on Main dispatcher only.**
+- Do not store secrets in code or resources. Use Keystore, BuildConfig, or env. No PII in logs or crash reports.
 
 ## Flutter (Dart)
 
-- effective_dart·프로젝트 분석 옵션 준수. 의존성 pubspec.lock·버전 범위 유지. 임의 변경 금지.
-- 접근성(Semantics·라벨), 반응형·다국어 반드시 고려. 비동기는 async/await·Future. UI는 build 내 **동기만**.
-- 비밀은 코드에 저장 금지. flutter_dotenv·--dart-define·네이티브 시크릿만 사용. 로그에 비밀·PII 포함 금지.
+- Follow effective_dart and project analysis options. Keep pubspec.lock and version ranges; do not change arbitrarily.
+- Consider accessibility (Semantics, labels), responsive layout, localization. Use async/await and Future for async; **keep build synchronous.**
+- Do not store secrets in code. Use flutter_dotenv, --dart-define, or native secrets. No secrets or PII in logs.
 
-## Web (JS/TS · React/Vue/Svelte 등)
+## Web (JS/TS · React/Vue/Svelte etc.)
 
-- 프로젝트 프레임워크·번들러·lint 규칙 준수. 의존성 package-lock·yarn.lock·pnpm-lock 유지. 임의 변경 금지.
-- a11y(시맨틱·ARIA·키보드·포커스), 반응형·i18n 반드시 고려. CSR/SSR·hydration 일관 유지.
-- 비밀은 클라이언트 코드·빌드 산출물에 포함 금지. env·빌드 시 주입만. XSS·CORS·CSP 고려. 로그·에러에 PII 포함 금지.
+- Follow project framework, bundler, and lint rules. Keep package-lock, yarn.lock, or pnpm-lock; do not change arbitrarily.
+- Consider a11y (semantics, ARIA, keyboard, focus), responsive layout, i18n. Keep CSR/SSR and hydration consistent.
+- Do not ship secrets in client code or build output. Use env or build-time injection. Consider XSS, CORS, CSP. No PII in logs or errors.
 
-## Server (Node/Go/Rust/Java/Python 등)
+## Server (Node/Go/Rust/Java/Python etc.)
 
-- 프로젝트 컨벤션·디렉터리 구조 준수. 의존성 lockfile·go.sum·Cargo.lock·requirements.txt 등 유지. 임의 변경 금지.
-- API 응답 형식 통일(예: `{ success, data?, error? }`). HTTP 2xx/4xx/5xx·타임아웃·rate limit 반드시 적용. 장시간 작업은 queue·백그라운드만.
-- 비밀은 코드에 저장 금지. env·시크릿 매니저만 사용. 입력 검증·인증·권한 생략 금지. 로그에 비밀·PII 포함 금지.
+- Follow project conventions and directory layout. Keep lockfile, go.sum, Cargo.lock, requirements.txt, etc.; do not change arbitrarily.
+- Use a consistent API response shape (e.g. `{ success, data?, error? }`). Apply HTTP 2xx/4xx/5xx, timeouts, rate limits. Long work in queue/background only.
+- Do not store secrets in code. Use env or a secret manager. Do not skip input validation, auth, or authorization. No secrets or PII in logs.
 
-## 공통 (모든 플랫폼)
+## Common (all platforms)
 
-- 공개 API/유틸에 **단위 테스트** 추가. 테스트명은 “조건→기대결과”. mock은 외부 의존성만.
-- 커밋은 “동사+대상”. **1커밋=1논리변경**. PR에 이유·테스트 방법·breaking 여부 반드시 기재.
+- Add **unit tests** for public API and utilities. Test names: “condition → expected”. Mock only external dependencies.
+- Commits: “verb + object”. **One commit = one logical change.** PRs must state reason, how to test, and whether there are breaking changes.

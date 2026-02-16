@@ -1,34 +1,34 @@
-# Code Review — 리뷰 기준 (사람 읽기용)
+# Code Review — Review criteria (human-readable)
 
-실제 주입용 문장은 **YAML**에 있습니다.  
-→ `prompts/review.yml` (도구는 `prompt` 키 사용)
+The actual text used for injection is in **YAML**.  
+→ `prompts/review.yml` (tools use the `prompt` key)
 
 ---
 
-## 적용 범위
+## Scope
 
-- **언제 사용되는지**: `ai.config.yml`의 `prompts.review`, 그리고 `task_presets.review`, `task_presets.security_audit`에서 이 프롬프트가 사용됩니다. 코드 리뷰·보안 감사 시 선택하는 preset입니다.
+- **When used**: This prompt is used from `ai.config.yml`’s `prompts.review` and from `task_presets.review` and `task_presets.security_audit`. Use it for code review and security audits.
 
-## 검사 범위
+## Review scope
 
-diff 전체, 신규 의존성, 설정·env 변경을 **전부** 검토.
+Review **all** of: full diff, new dependencies, config and env changes.
 
-## 체크리스트 (위반만 파일:라인·구체 내용으로 기입)
+## Checklist (report only violations as file:line + concrete issue)
 
-1. **일관성**: 기존 네이밍·스타일·디렉터리·패턴·플랫폼 관례와 100% 일치. 불일치 시 반드시 지적.
-2. **품질**: 단일 책임·중복 없음·매직값 상수화·고복잡도 구간 설명 유무. 미충족 시 수정 요청.
-3. **보안**: 비밀/키/토큰이 코드·로그에 노출되지 않았는지, 입력 검증(타입·범위·포맷)이 있는지. 위반 시 수정 요청.
-4. **에러**: 실패 시나리오·타임아웃·재시도 고려, 에러 메시지 구체성. 미고려 시 지적.
-5. **호환**: 기존 API·동작 훼손 여부, 마이그레이션·설정 변경 필요 시 명시 여부. 훼손·미명시 시 수정 요청.
+1. **Consistency**: Matches existing naming, style, layout, patterns, and platform conventions. Call out any mismatch.
+2. **Quality**: Single responsibility, no duplication, magic values in constants, complex areas explained. Request changes if not met.
+3. **Security**: No secrets/keys/tokens in code or logs; input validation (type, range, format) present. Request changes on violation.
+4. **Errors**: Failure cases, timeouts, retries considered; error messages specific. Call out if missing.
+5. **Compatibility**: No breaking existing API/behavior; migration or config changes documented when needed. Request changes if broken or undocumented.
 
-## 출력 형식
+## Output format
 
-- **요약**: 1~2문장 (승인 / 조건부 승인 / 수정 후 재검토).
-- **항목별**: 위반 항목만 위 순서대로 **파일:라인 + 구체 내용**.
-- **제안**: 수정 제안이 있으면 코드 스니펫 또는 단계로 제시.
-- **잘된 점**: 1~2줄 (권장).
+- **Summary**: 1–2 sentences (Approve / Conditional approve / Request changes).
+- **Per item**: Only violated items, in the order above, as **file:line + concrete description**.
+- **Suggestions**: Code snippets or steps when you have a fix to suggest.
+- **What’s good**: 1–2 lines (recommended).
 
-## 결론 규칙
+## Conclusion rules
 
-- **미준수 항목이 하나라도 있으면** → “수정 후 재검토”.
-- **전 항목 통과 시에만** → “승인”.
+- **Any item not satisfied** → “Request changes”.
+- **All items satisfied** → “Approve”.
