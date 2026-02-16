@@ -1,7 +1,7 @@
 # Prompt Guide — Docs index
 
 This directory contains documentation for **setup, configuration, and rules**.  
-YAML config lives in `ai/ai.config.yml`; the actual rule text used for injection is in `prompts/*.yml`.  
+Config lives in `prompt.config.js`; the actual rule text used for injection is in `prompts/*.yml`.  
 Here we provide **human-readable summaries** and **CLI/feature documentation**.
 
 ---
@@ -16,6 +16,7 @@ Here we provide **human-readable summaries** and **CLI/feature documentation**.
 | **[system.core.md](system.core.md)** | Developers, reviewers | Core rules summary (role, code quality, security, errors, docs, collaboration). Source: `prompts/system.core.yml`. |
 | **[review.md](review.md)** | Reviewers | Code review scope, checklist, output format, conclusion rules. Source: `prompts/review.yml`. |
 | **[rules-by-platform.md](rules-by-platform.md)** | Platform developers | Per-platform rule summaries (iOS, Android, Flutter, Web, Server). Source: `prompts/rules.by-platform.yml`. |
+| **[rules-by-tool.md](rules-by-tool.md)** | Users, maintainers | **Where each AI tool reads rules**: Cursor (`.cursor/rules/`), Claude Code (`.claude/rules/`), Codex (`AGENTS.md`), Windsurf (`.windsurfrules`). Format and limits per tool. |
 
 ---
 
@@ -32,6 +33,9 @@ Here we provide **human-readable summaries** and **CLI/feature documentation**.
 
 4. **Changing config or adding presets/platforms**  
    [what-install.md](what-install.md) (sections 2–6)
+
+5. **Using a specific AI tool (Cursor, Codex, Windsurf, etc.)**  
+   [rules-by-tool.md](rules-by-tool.md) (where each tool loads rules and how to align with prompt-guide)
 
 ---
 

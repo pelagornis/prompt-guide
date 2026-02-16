@@ -27,7 +27,7 @@ How to **phrase requests** when asking the AI to do work: per-preset tips, how t
 
 ## Per-preset request tips
 
-**task_presets** in `ai.config.yml` change which rules the AI uses. Use the following when phrasing requests.
+**taskPresets** in `prompt.config.js` change which rules the AI uses. Use the following when phrasing requests.
 
 ### default — General coding / editing
 

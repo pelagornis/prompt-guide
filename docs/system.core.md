@@ -7,7 +7,7 @@ The actual text used for injection is in **YAML**.
 
 ## Scope
 
-- **When applied**: This rule set is injected as the system role from `ai.config.yml`’s `system_role`, `prompts.default`, and most `task_presets` (default, refactor, implement, fix_bug, etc.). Review-only presets (review, security_audit) use `prompts/review.yml` instead.
+- **When applied**: This rule set is injected as the system role from `prompt.config.js`’s `prompts.default`, and most `taskPresets` (default, refactor, implement, fix_bug, etc.). Review-only presets (review, security_audit) use `prompts/review.yml` instead.
 - **Audience**: All platforms (iOS, Android, Flutter, Web, Server). Language and framework neutral.
 
 ## Role and response

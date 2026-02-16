@@ -3,7 +3,7 @@
 The actual text used for injection is in **YAML**.  
 → `prompts/rules.by-platform.yml` (tools use `platforms.<name>.prompt`)
 
-- **When applied**: When `platform` in `ai.config.yml` is set to ios, android, flutter, web, or server, that platform’s block is merged after the system role. If `platform: null`, these rules are not applied.
+- **When applied**: When `platform` in `prompt.config.js` is set to ios, android, flutter, web, or server, that platform’s block is merged after the system role. If `platform: null`, these rules are not applied.
 - **When forking**: Use only the blocks for your target platform(s); merge blocks if the project spans multiple platforms.
 
 ---

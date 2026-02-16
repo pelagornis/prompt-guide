@@ -7,7 +7,7 @@ The actual text used for injection is in **YAML**.
 
 ## Scope
 
-- **When used**: This prompt is used from `ai.config.yml`’s `prompts.review` and from `task_presets.review` and `task_presets.security_audit`. Use it for code review and security audits.
+- **When used**: This prompt is used from `prompt.config.js`’s `prompts.review` and from `taskPresets.review` and `taskPresets.security_audit`. Use it for code review and security audits.
 
 ## Review scope
 

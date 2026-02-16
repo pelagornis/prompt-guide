@@ -1,6 +1,6 @@
 # CLI usage guide
 
-The Prompt Guide CLI installs `ai/`, `prompts/`, and `docs/` in your project and configures platform-specific `.gitignore`. It also provides a `doctor` command to check that setup.
+The Prompt Guide CLI creates `prompt.config.js` and copies `prompts/`, `docs/` in your project; run `prompt-guide install` to generate tool-specific rules. It also provides a `doctor` command to check that setup.
 
 ---
 
@@ -21,7 +21,7 @@ The Prompt Guide CLI installs `ai/`, `prompts/`, and `docs/` in your project and
 Install once and run from any directory:
 
 ```bash
-npm install -g prompt-guide-cli
+npm install -g @pelagornis/prompt-guide
 prompt-guide              # Help and banner
 prompt-guide init         # Interactive init
 prompt-guide init -p web  # Init with web platform
@@ -35,9 +35,9 @@ You do not need to add the package to your project’s `package.json`.
 Run the latest version without a global install:
 
 ```bash
-npx prompt-guide-cli init
-npx prompt-guide-cli init --platform=ios
-npx prompt-guide-cli doctor --fix
+npx @pelagornis/prompt-guide init
+npx @pelagornis/prompt-guide init --platform=ios
+npx @pelagornis/prompt-guide doctor --fix
 ```
 
 ### 3. From this repo (development)
@@ -95,9 +95,10 @@ prompt-guide init [options]
 
 | Option | Short | Description |
 |--------|-------|-------------|
-| `--platform <platform>` | `-p` | Platform. If omitted, chosen interactively (1–5 or name). |
+| `--platform <platform>` | `-p` | Platform. If omitted, chosen interactively (1–5 or name) when stdin is a TTY. |
+| `--tool <tool>` | `-t` | AI tool (cursor, claude, codex, windsurf, other). If omitted, chosen interactively when stdin is a TTY. |
 | `--dry-run` | — | Do not write files; only print what would be done. |
-| `-y`, `--yes` | — | Non-interactive: use default platform (web) when `--platform` is omitted. |
+| `-y`, `--yes` | — | Non-interactive: use default platform (web) and tool (cursor) when omitted. Also used when stdin is not a TTY (e.g. scripts, CI). |
 
 ### Supported platforms
 
@@ -111,12 +112,12 @@ prompt-guide init [options]
 
 ### What init does
 
-1. **Choose platform** — If `-p`/`--platform` is not set, prompts in the terminal (1–5 or name). With `-y`, uses default (web).
-2. **Copy directories** — Copies `ai/`, `prompts/`, `docs/` from templates into the current directory.
-3. **Update config** — Sets `platform` in `ai/ai.config.yml` to the chosen platform.
+1. **Choose platform and tool** — If `-p`/`--platform` or `-t`/`--tool` are not set and stdin is a TTY, prompts in the terminal. With `-y`, or when stdin is not a TTY (e.g. scripts, CI), uses defaults (platform: web, tool: cursor) and prints “(non-interactive, default)” or “(--yes)”.
+2. **Create config** — Writes `prompt.config.js` with `platform` and `tool` set.
+3. **Copy directories** — Copies `prompts/`, `docs/` from templates into the current directory.
 4. **.gitignore** — Appends a prompt-guide block (common + platform-specific) to `.gitignore`, or creates it if missing.
 
-If `ai/`, `prompts/`, or `docs/` already exist, init **overwrites** them and prints a warning.
+If `prompt.config.js`, `prompts/`, or `docs/` already exist, init **overwrites** them and prints a warning. Then run **`prompt-guide install`** to generate tool-specific rule files.
 
 ### Examples
 
@@ -129,8 +130,9 @@ prompt-guide init --platform=ios
 prompt-guide init -p web
 prompt-guide init -p server
 
-# Non-interactive (default platform: web)
+# Non-interactive (default platform: web, tool: cursor)
 prompt-guide init -y
+prompt-guide init --platform=ios --tool=codex
 
 # Show planned actions only
 prompt-guide init -p flutter --dry-run
@@ -141,8 +143,8 @@ prompt-guide init -p android -v
 
 ### Notes
 
-- **Existing `ai/`, `prompts/`, `docs/`** — Init overwrites them. Back up or copy files manually if you have local changes.
-- **Templates not found** — Reinstall the CLI or, when running from this repo, run `npm run build` and ensure `ai/`, `prompts/`, `docs/` exist under `cli/`.
+- **Existing `prompt.config.js`, `prompts/`, `docs/`** — Init overwrites them. Back up or copy files manually if you have local changes.
+- **Templates not found** — Reinstall the CLI or, when running from this repo, run `npm run copy-templates` and `npm run build` so `prompts/`, `docs/` exist under `cli/`.
 
 ---
 
@@ -161,15 +163,14 @@ prompt-guide doctor [options]
 
 | Option | Description |
 |--------|-------------|
-| `--fix` | Create or append the prompt-guide block in `.gitignore` when missing. Uses `platform` from `ai/ai.config.yml` (default `web`). |
+| `--fix` | Create or append the prompt-guide block in `.gitignore` when missing. Uses `platform` from `prompt.config.js` (default `web`). |
 | `--json` | Output results as JSON (for scripting). |
 
 ### Checks
 
 | Check | Pass condition | On failure |
 |-------|-----------------|------------|
-| **ai/** | `ai/` exists | Run `prompt-guide init` |
-| **ai/ai.config.yml** | File exists and contains `platform:` and `context:` | Run `prompt-guide init` or add those keys |
+| **prompt.config.js** | File exists and loads | Run `prompt-guide init` |
 | **prompts/** | `prompts/` exists | Run `prompt-guide init` |
 | **docs/** | `docs/` exists | Run `prompt-guide init` |
 | **.gitignore** | File exists and contains `# prompt-guide (added by prompt-guide-cli)` | Run `prompt-guide doctor --fix` or `prompt-guide init` |
@@ -213,5 +214,5 @@ Useful when you only need to fix `.gitignore` without re-running init.
 
 ## Next steps
 
-- **After install**: Edit `ai/ai.config.yml` (e.g. `model.default`, `context.include`) for your project. See the main [README Configuration Reference](../README.md#configuration-reference) and [what-install.md](what-install.md).
+- **After init**: Edit `prompt.config.js` (e.g. `model.default`, `context.include`) and run `prompt-guide install`. See the main [README Configuration Reference](../README.md#configuration-reference) and [what-install.md](what-install.md).
 - **Rule summaries**: See `docs/system.core.md`, `docs/review.md`, and `docs/rules-by-platform.md` for human-readable rule summaries.

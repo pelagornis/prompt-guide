@@ -11,43 +11,51 @@ The same structure works for **any project** (language and framework agnostic).
 
 | Command | Description |
 |---------|-------------|
-| `prompt-guide init` | Install ai/, prompts/, docs/ in the current directory and add platform-specific .gitignore. Use `-p <platform>` or interactive choice. |
+| `prompt-guide init` | Create **prompt.config.js** and copy prompts/, docs/ in the current directory; add platform-specific .gitignore. Use `-p <platform>` and `-t <tool>` or interactive. |
+| `prompt-guide install` | Read **prompt.config.js** and generate **tool-specific** rule files (Cursor → .cursor/rules/, Codex → AGENTS.md, Windsurf → .windsurfrules, Claude Code → .claude/rules/). |
 | `prompt-guide init --dry-run` | Show what would be done without writing files. |
-| `prompt-guide doctor` | Check presence and validity of ai/, config, prompts/, docs/, .gitignore. |
+| `prompt-guide install --dry-run` | Show which files would be written for the current tool. |
+| `prompt-guide doctor` | Check presence of prompt.config.js, prompts/, docs/, .gitignore. |
 | `prompt-guide doctor --fix` | Create or append the prompt-guide block in .gitignore when missing. |
 
 ---
 
-## 1. What gets added on install (CLI `init` or manual copy)
+## 1. What gets added
+
+**init** adds:
 
 | Path | Description | Added by |
 |------|-------------|----------|
-| **ai/ai.config.yml** | Model, context, system role, task presets, platform, rules. **Single source of behavior.** | CLI init / manual copy |
-| **prompts/system.core.yml** | Core rules (YAML). Tools inject the `prompt` key. | CLI init / manual copy |
-| **prompts/review.yml** | Review rules. Uses `prompt` key. | CLI init / manual copy |
-| **prompts/rules.by-platform.yml** | Per-platform rules (ios, android, flutter, web, server, common). `platforms.<name>.prompt` | CLI init / manual copy |
-| **prompts/guide.template.yml** | Task prompt template field definitions. | CLI init / manual copy |
-| **docs/system.core.md** | Core rules summary (human-readable). | CLI init / manual copy |
-| **docs/review.md** | Review criteria summary. | CLI init / manual copy |
-| **docs/rules-by-platform.md** | Per-platform rules summary. | CLI init / manual copy |
-| **.gitignore** (block) | Common + **chosen platform** ignore patterns. | CLI init (varies by platform) |
+| **prompt.config.js** | tool, platform, model, context, prompts paths, taskPresets, platforms, rules. **Single source.** Edit and run `prompt-guide install` to apply. | CLI init |
+| **prompts/** | system.core.yml, review.yml, rules.by-platform.yml, guide.template.yml. | CLI init / manual copy |
+| **docs/** | system.core.md, review.md, rules-by-platform.md, etc. | CLI init / manual copy |
+| **.gitignore** (block) | Common + chosen platform ignore patterns. | CLI init (varies by platform) |
 
-With the CLI, choosing a **platform** sets `platform` in `ai.config.yml` and appends that platform’s patterns to `.gitignore`.
+**install** adds (depending on `tool` in prompt.config.js):
+
+| Path | Description | When |
+|------|-------------|------|
+| **.cursor/rules/use-prompt-guide.mdc** | Cursor rule that references prompt.config.js and prompts/. | `tool: 'cursor'` |
+| **AGENTS.md** | Codex project instructions (system + review summary). | `tool: 'codex'` |
+| **.windsurfrules** | Windsurf project rules (condensed, &lt;6k chars). | `tool: 'windsurf'` |
+| **.claude/rules/prompt-guide-*.md** | Claude Code rule files (core + review). | `tool: 'claude'` |
+
+See **[rules-by-tool.md](rules-by-tool.md)** for where each tool reads rules.
 
 ---
 
-## 2. ai.config.yml — What each section controls
+## 2. prompt.config.js — What each section controls
 
 | Section | What it adds/controls | When changing later |
 |---------|------------------------|----------------------|
-| **model** | Default model and option list. | Edit `model.default`, `model.options`. Add `task_presets.<name>.model` for per-preset model. |
+| **tool** | Which AI environment. **install** uses this to write the right files. | Change and run `prompt-guide install` again. |
+| **platform** | Current platform (ios \| android \| flutter \| web \| server). | Edit; used for context hints and .gitignore. |
+| **model** | Default model and option list. | Edit `model.default`, `model.options`. |
 | **context** | Which paths to include/exclude, max_files, max_tokens. | Adjust `include`/`exclude` to your project layout. |
-| **system_role** | File that defines the system role (quality, security, errors, etc.). | Usually keep. To change, edit the `prompt` in the YAML it points to. |
-| **prompts** | Named prompt files (default, review, etc.). | Add names or change paths. |
-| **task_presets** | Per-task prompt, extra rules, model. | Add presets or edit `prompt`/`rules_extra`/`model`. |
-| **platform** | Current platform (ios \| android \| flutter \| web \| server). null = no platform merge. | Set e.g. `platform: ios` to apply that platform’s config. |
-| **platforms** | Per-platform context.include and rules_key. | Adjust `platforms.<id>.context.include` to your paths. |
-| **rules** | Global rules (no_auto_scan, strict, cite_sources, etc.). | Toggle here if your tool supports them. |
+| **prompts** | Paths to default and review YAML (e.g. `prompts/system.core.yml`). | Add names or change paths; install reads these. |
+| **taskPresets** | Per-task prompt path, description, rules_extra, model. | Add presets or edit. |
+| **platforms** | Per-platform context.include and rules_key. | Adjust to your paths. |
+| **rules** | Global rules (no_auto_scan, strict, cite_sources, etc.). | Toggle if your tool supports them. |
 
 ---
 
@@ -87,7 +95,7 @@ Changing the preset applies **different rules/prompts for that task only** in th
 | **web** | src/**, public/**, app/**, *.config.js, etc. | platforms.web.prompt |
 | **server** | src/**, lib/**, app/**, internal/**, cmd/** | platforms.server.prompt |
 
-If `platform: null`, no platform merge is applied and only the top-level **context** in `ai.config.yml` is used.
+If `platform` is null or unset, only the top-level **context** in `prompt.config.js` is used.
 
 ---
 
@@ -95,19 +103,19 @@ If `platform: null`, no platform merge is applied and only the top-level **conte
 
 | Goal | What to change |
 |------|----------------|
-| **Switch platform** | Change `platform` in `ai.config.yml`. Optionally adjust `platforms.<id>.context.include` for your paths. |
-| **Stricter review** | Use `task_presets.review` (already wired). To tighten, edit `prompt` in `prompts/review.yml`. |
+| **Switch platform** | Change `platform` in `prompt.config.js`. Optionally adjust `platforms.<id>.context.include` for your paths. |
+| **Stricter review** | Use `taskPresets.review` (already wired). To tighten, edit `prompt` in `prompts/review.yml`. |
 | **Adjust context scope** | Edit `context.include`/`context.exclude` for your layout; if using a platform, also `platforms.<id>.context.include`. |
-| **Change model only** | Change `model.default`. Add `task_presets.<name>.model` for a specific task. |
-| **Add a task preset** | Add a new entry under `task_presets` with `description`, `prompt`, and optionally `rules_extra`, `model`. |
+| **Change model only** | Change `model.default`. Add `taskPresets.<name>.model` for a specific task. |
+| **Add a task preset** | Add a new entry under `taskPresets` with `description`, `prompt`, and optionally `rules_extra`, `model`. Then run `prompt-guide install` if needed. |
 | **Project-specific rules** | Add to `prompt` in `prompts/system.core.yml` or add a new YAML and reference it from `system_role`/`prompts`. |
 
 ---
 
 ## 7. Using this in any project
 
-- **Install**: Run `prompt-guide init` (or copy `ai/`, `prompts/`, `docs/` manually). Then run `prompt-guide doctor`; if only .gitignore is missing, run `prompt-guide doctor --fix`.
-- **Common layout**: `ai.config.yml` + `prompts/system.core.yml` + `prompts/review.yml` + `prompts/rules.by-platform.yml` is the same **for all languages and frameworks**.
+- **Install**: Run `prompt-guide init` then `prompt-guide install` (or copy `prompt.config.js`, `prompts/`, `docs/` manually and run install). Run `prompt-guide doctor`; if only .gitignore is missing, run `prompt-guide doctor --fix`.
+- **Common layout**: `prompt.config.js` + `prompts/system.core.yml` + `prompts/review.yml` + `prompts/rules.by-platform.yml` is the same **for all languages and frameworks**.
 - **Project-specific**: Only `context.include`/`exclude`, `platform`, `platforms.<id>.context.include`, and optionally `model.default` and presets.
 - **Docs**: Rule summaries are in `docs/system.core.md`, `docs/review.md`, `docs/rules-by-platform.md`. CLI usage in `docs/CLI.md`. YAML is for tools; Markdown is for humans.
 
