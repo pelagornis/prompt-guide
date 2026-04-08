@@ -1,0 +1,30 @@
+# Layer manifest — paths are relative to `layers.source` in prompt.config.js
+# (default: .claude). Edit this file to add/remove/reorder layers.
+# Files may be `.md` (raw) or `.yml` / `.yaml` with a string key `prompt:` or `text:` (often fewer tokens than Markdown).
+# Missing files are skipped (no error). Empty files are skipped.
+version: 1
+
+system:
+  - core/rules.md
+  - core/constraints.md
+  - core/style.md
+  - context/product.md
+  - context/architecture.md
+  - context/domain.md
+  - memory/decisions.md
+  - memory/patterns.md
+  - memory/bugs.md
+  - actions/coding.md
+  - actions/debugging.md
+  - agents/backend.md
+  - agents/frontend.md
+  - agents/infra.md
+
+review:
+  path: actions/reviewing.md
+
+# Optional: how Cursor lists files in read-ai-context-manifest.mdc
+# - all: every .md / .yml / .yaml under layers.source (default install behavior)
+# - system: only files listed in `system` above (plus review if you add it manually to rules)
+cursor:
+  list: all

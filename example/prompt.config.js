@@ -1,18 +1,42 @@
 /**
- * Prompt Guide config — sample for testing (example folder)
- * Run `prompt-guide install` to generate tool-specific rules.
+ * Prompt Guide config — single source for model, context, rules, and tool-specific install.
+ * Edit this file, then run `prompt-guide install` to apply to your AI tool (Cursor, Codex, Windsurf, Claude Code, etc.).
+ * @see https://github.com/pelagornis/prompt-guide
  */
 module.exports = {
   tool: 'cursor',
-  platform: 'web',
+  stackProfile: 'universal',
+  platform: 'universal',
 
   model: {
     default: 'claude-sonnet-4',
     options: ['claude-sonnet-4', 'claude-opus-4', 'gpt-4o', 'gpt-4o-mini'],
   },
 
+  layers: {
+    source: '.claude',
+    manifest: 'layers.manifest.yml',
+    /** Edit Markdown here; `install` writes matching `*.yml` under layers.source + mirrors. */
+    docsAuthoring: 'docs/prompt-guide',
+    initTargets: [],
+    bundleMinify: true,
+  },
+
   context: {
-    include: ['src/**', 'lib/**', 'app/**', 'packages/**'],
+    include: [
+      'src/**',
+      'lib/**',
+      'app/**',
+      'packages/**',
+      'docs/prompt-guide/**',
+      '.claude/**',
+      '.cursor/**',
+      'codex/**',
+      '.windsurf/**',
+      'layers.manifest.yml',
+      'CLAUDE.md',
+      'AGENTS.md',
+    ],
     exclude: [
       '**/.env', '**/.env.*', '**/secrets/**', '**/*secret*', '**/*credentials*',
       '**/*.pem', '**/*.key', '**/node_modules/**', '**/dist/**', '**/build/**',

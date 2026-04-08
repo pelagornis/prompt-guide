@@ -1,0 +1,16 @@
+prompt: |-
+  # Core — code style and structure
+
+  ## Naming and clarity
+
+  MUST: Names express intent. No magic numbers or strings — constants or config.
+
+  ## Consistency with the repo
+
+  MUST: Match existing indentation, quotes, naming, and directory layout. New code follows existing patterns.
+
+  ## Structure
+
+  MUST: Single responsibility per function/class/module. Split when responsibility mixes.
+  MUST: No duplicated logic — extract shared helpers or components.
+  MUST: Minimize dependencies and coupling; prefer clear boundaries (see `context/architecture.md` when filled).

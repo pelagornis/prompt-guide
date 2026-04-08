@@ -1,0 +1,16 @@
+prompt: |-
+  # Runtime — current task (session)
+
+  **Ephemeral.** Update per task. The AI should treat this as the **active goal** for this session.
+
+  ## Current task
+
+  - _(One sentence: what we are doing now.)_
+
+  ## Definition of done
+
+  - [ ] _(checklist)_
+
+  ## Out of scope (this session)
+
+  - _(what we are not doing now)_

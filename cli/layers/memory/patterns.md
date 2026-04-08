@@ -1,0 +1,15 @@
+# Memory — patterns
+
+Stable patterns to **prefer** in this repo. The AI should reuse these instead of inventing new shapes.
+
+## Patterns we use
+
+- **Error handling:** (e.g. Result types, exceptions, error codes)
+- **Logging:** (e.g. structured fields, levels)
+- **API style:** (e.g. REST conventions, versioning)
+- **Testing:** (e.g. unit vs integration layout, fixtures)
+- **Config:** (e.g. env naming, feature flags)
+
+## Anti-patterns (avoid)
+
+- Things we explicitly do not do and why:

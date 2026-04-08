@@ -1,5 +1,6 @@
 # System Core — base rules for all prompts (enforced)
-# Tools: use this file's prompt key. Human-readable: docs/system.core.md
+# If layered Markdown exists under `layers.source` (e.g. `.claude/core/rules.md`), `prompt-guide install` prefers that tree for Codex/Claude/Windsurf; this YAML remains the fallback and for platform/presets.
+# Human-readable: docs/system.core.md
 
 meta:
   name: system.core

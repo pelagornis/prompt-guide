@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-export const PLATFORMS = ['ios', 'android', 'flutter', 'web', 'server'] as const;
+/** `universal` = stack-agnostic; no extra .gitignore block or platform YAML beyond optional merge. */
+export const PLATFORMS = ['universal', 'ios', 'android', 'flutter', 'web', 'server'] as const;
 
 export const platformSchema = z.enum(PLATFORMS, {
   errorMap: () => ({

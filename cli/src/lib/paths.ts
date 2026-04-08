@@ -11,7 +11,7 @@ const pkgRoot = path.join(__dirname, '..', '..');
 const repoRoot = path.join(pkgRoot, '..');
 
 /**
- * Directory that contains prompts/, docs/ (and optionally .cursor/).
+ * Directory that contains prompts/, docs/, layers/ (and optionally .cursor/).
  * - When published: package root has docs/, prompts/ (copied by prepublishOnly).
  * - In repo: repo root if cli/ has no prompts/ yet.
  */

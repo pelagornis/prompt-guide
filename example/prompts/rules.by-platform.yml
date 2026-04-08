@@ -6,6 +6,15 @@ meta:
   usage: "system.core + selected platform prompt merged"
 
 platforms:
+  universal:
+    name: Universal
+    stack: Any (infer from repo)
+    prompt: |
+      ## Universal (stack-agnostic)
+      MUST: Infer language, framework, and layout from this repository — do not assume mobile, web, or server unless files and docs clearly show it.
+      MUST: Follow existing patterns, tests, and documentation in the repo. Prefer the layered context under `layers.source` over generic stack advice.
+      MUST NOT: Add platform-specific tooling or directories unless the project already uses them.
+
   ios:
     name: iOS
     stack: Swift / SwiftUI / UIKit

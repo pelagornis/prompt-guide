@@ -1,6 +1,6 @@
 # Prompt Guide
 
-**CLI project, not a project template.** This repo is a tool that adds a single config file and rule templates to any project. Install globally (`npm i -g @pelagornis/prompt-guide`), run **`prompt-guide init`** to create **`prompt.config.js`** (and copy `prompts/`, `docs/`), then run **`prompt-guide install`** to generate **tool-specific rules** (Cursor, Codex, Windsurf, Claude Code) from that config. All behavior is defined in `prompt.config.js` (tool, platform, model, context, task presets); prompt text lives in `prompts/*.yml`; human summaries are in `docs/` as Markdown.
+**CLI project, not a project template.** This repo is a tool that adds a single config file and rule templates to any project. Install globally (`npm i -g @pelagornis/prompt-guide`), run **`prompt-guide init`** to create **`prompt.config.js`**, **`layers.manifest.yml`**, **`CLAUDE.md`**, and copy **`prompts/`**, **`docs/`**, and the layered Markdown tree into **`.cursor/`**, **`.claude/`**, **`codex/`**, **`.windsurf/`** (same layout at each root; **no** `…/ai/` subfolder), then run **`prompt-guide install`** to generate **tool-specific rules** (Cursor, Codex, Windsurf, Claude Code). All behavior is defined in `prompt.config.js` (`tool`, `platform`, `layers.source`, `layers.manifest`, model, context, task presets). See **[CLI commands](#cli-commands--cli-명령어)** below.
 
 ---
 
@@ -9,6 +9,7 @@
 - [Overview](#overview)
 - [Features](#features)
 - [Quick Start](#quick-start)
+- [CLI commands · CLI 명령어](#cli-commands--cli-명령어)
 - [Configuration Reference](#configuration-reference)
 - [File Structure](#file-structure)
 - [Usage Guide](#usage-guide)
@@ -30,7 +31,7 @@ Prompt Guide gives you a **single JS config** (`prompt.config.js`) that controls
 - **Which “agent”** runs: task presets (default, review, refactor, implement, fix_bug, security_audit) each with their own prompt and optional model/rules.
 - **System role** text: from `prompts/system.core.yml` (and review from `prompts/review.yml`); install injects these into the tool-specific output.
 
-The same setup works across **iOS, Android, Flutter, Web, and Server** projects. Run **init** to create `prompt.config.js` and **install** to generate rules for your chosen tool; edit `context.include` and `platform` in `prompt.config.js` for your repo.
+**Platform** is optional: use **`universal`** (default) when the repo is **not** tied to one stack — rules and `.gitignore` stay generic; switch to `web`, `ios`, `server`, etc. when you want **stack-specific** context globs and YAML from `prompts/rules.by-platform.yml`. Run **init** then **install**; edit `context.include` and `platform` in `prompt.config.js` for your repo.
 
 ---
 
@@ -46,7 +47,7 @@ The same setup works across **iOS, Android, Flutter, Web, and Server** projects.
 | **Platform-specific config** | Set `platform: ios` (or android, flutter, web, server) to use per-platform context and rules; each platform has its own `context.include` and `rules_key` into `rules.by-platform.yml`. |
 | **Human-readable docs** | Rule summaries in `docs/*.md` so people can read the rules without parsing YAML. |
 | **Tool-specific rules** | Each AI tool (Cursor, Claude Code, Codex, Windsurf) reads rules from different paths and formats. See [docs/rules-by-tool.md](docs/rules-by-tool.md). |
-| **CLI** | `prompt-guide init` — create `prompt.config.js` + prompts/ + docs/. `prompt-guide install` — generate tool-specific rules from config. See [cli/README.md](cli/README.md). |
+| **CLI** | `init`, `install`, `doctor` — see [CLI commands](#cli-commands--cli-명령어). Maintainer notes: [cli/README.md](cli/README.md). |
 
 ---
 
@@ -57,24 +58,74 @@ Install once globally (e.g. on macOS), then run from any directory:
 
 ```bash
 npm i -g @pelagornis/prompt-guide
-prompt-guide init          # creates prompt.config.js + prompts/ + docs/
+prompt-guide init          # creates prompt.config.js + prompts/ + docs/ + layered Markdown under .claude/
 prompt-guide install       # generates rules for your tool (Cursor, Codex, Windsurf, Claude Code)
 # or: prompt-guide init --platform=ios --tool=codex
 ```
 
-No need to add the package to your project’s `package.json`. **init** creates `prompt.config.js` and copies `prompts/`, `docs/`; **install** reads the config and writes tool-specific rule files (e.g. `.cursor/rules/`, `AGENTS.md`, `.windsurfrules`, `.claude/rules/`). See [cli/README.md](cli/README.md).
+No need to add the package to your project’s `package.json`. **init** creates `prompt.config.js` and copies `prompts/`, `docs/`, and the **layers/** tree into **`.cursor/`**, **`.claude/`**, **`codex/`**, **`.windsurf/`**; **install** reads the config and writes tool-specific rule files (e.g. `.cursor/rules/`, `AGENTS.md`, `.windsurfrules`, `.claude/rules/`). See [cli/README.md](cli/README.md).
 
 Alternatively, one-off: `npx @pelagornis/prompt-guide init` then `npx @pelagornis/prompt-guide install`
 
-**Using the CLI from this repo (no `cd cli`)**  
-At the **repository root** you can run:
+---
 
-```bash
-npm install    # installs CLI deps (workspaces)
-npm run build  # builds the CLI
-npm run init   # runs init (interactive)
-npm run cli -- init --platform=ios   # run any CLI command
-```
+## CLI commands · CLI 명령어
+
+전역 설치 후 터미널에서 `prompt-guide <command>` 형태로 실행합니다. (`prompt-guide --help` 로 전체 도움말)
+
+### 전역 옵션 (Global)
+
+| 옵션 | 설명 |
+|------|------|
+| `-V`, `--version` | CLI 버전 출력 |
+| `-v`, `--verbose` | 자세한 로그 (어느 명령에나 붙일 수 있음) |
+| `-h`, `--help` | 도움말 |
+
+### `prompt-guide init`
+
+현재 디렉터리에 `prompt.config.js`, `layers.manifest.yml`, `CLAUDE.md`, `prompts/`, `docs/`, 레이어 트리 등을 만듭니다.
+
+| 옵션 | 설명 |
+|------|------|
+| `-p`, `--platform <platform>` | `universal` \| `web` \| `server` \| `ios` \| `android` \| `flutter` (생략 시 대화형; 기본 비대화형·`-y`는 `universal`) |
+| `-t`, `--tool <tool>` | `cursor` \| `claude` \| `codex` \| `windsurf` \| `other` |
+| `-y`, `--yes` | 비대화형: 플랫폼·도구 기본값(`web`, `cursor`) 사용 |
+| `--dry-run` | 파일을 쓰지 않고 할 일만 출력 |
+| `--layers-source <path>` | `layers.source`에 쓸 경로 (기본: `.claude`) |
+| `--skip-layers` | 레이어 폴더 복사 생략 (`CLAUDE.md` 등은 그대로 복사) |
+| `--layer-target <path>` | 레이어 템플릿을 **추가로** 복사할 경로 (여러 번 지정 가능) |
+
+### `prompt-guide install`
+
+`prompt.config.js`를 읽고 선택한 `tool`에 맞는 규칙 파일을 생성합니다 (실행 전에 같은 디렉터리에 있어야 함).
+
+| 옵션 | 설명 |
+|------|------|
+| `--dry-run` | 쓰지 않고 생성될 파일만 표시 |
+
+### `prompt-guide doctor`
+
+설정·파일 존재 여부를 점검합니다.
+
+| 옵션 | 설명 |
+|------|------|
+| `--fix` | `.gitignore`에 prompt-guide 블록이 없으면 추가 |
+| `--json` | 결과를 JSON으로 출력 (스크립트용) |
+
+### 이 저장소에서 (로컬 개발)
+
+저장소 루트에서:
+
+| 명령 | 설명 |
+|------|------|
+| `npm install` | 워크스페이스 의존성 설치 (`cli` 포함) |
+| `npm run build` | CLI TypeScript 빌드 |
+| `npm run init` | `prompt-guide init` (대화형) |
+| `npm run cli -- <args>` | 임의 CLI 전달 (예: `npm run cli -- install`, `npm run cli -- doctor --fix`) |
+| `npm run example:install` | `example/`에서 `install` 실행 |
+| `npm run example:doctor` | `example/`에서 `doctor` 실행 |
+
+---
 
 **Option B — Manual**  
 1. Copy `prompt.config.js` (or create from [template](cli/src/lib/prompt-config-template.ts)) and copy `prompts/`, `docs/` into your project.
@@ -93,7 +144,7 @@ npm run cli -- init --platform=ios   # run any CLI command
 
 **Any project** uses one config file and optional tool-generated rule files.
 
-- **init**: Creates `prompt.config.js` and copies `prompts/`, `docs/` (+ platform-specific `.gitignore` when using the CLI). No `ai/` folder.
+- **init**: Creates `prompt.config.js`, `layers.manifest.yml`, `CLAUDE.md`, copies `prompts/`, `docs/`, and the **layers/** tree into **`.cursor/`**, **`.claude/`**, **`codex/`**, **`.windsurf/`** (+ optional **`--layer-target`**; platform-specific `.gitignore`).
 - **install**: Reads `prompt.config.js` and writes **tool-specific** rule files: for **Cursor** `.cursor/rules/`, for **Codex** `AGENTS.md`, for **Windsurf** `.windsurfrules`, for **Claude Code** `.claude/rules/`. Change `tool` in config and run install again to switch.
 - **Which feature adds what**: see **[docs/what-install.md](docs/what-install.md)** for a detailed map:
   - What each path adds (prompt.config.js vs prompts vs docs).
@@ -116,6 +167,16 @@ Which AI editor or API you use. **`prompt-guide install`** uses this to write th
 | `tool` | string | One of: `cursor`, `claude`, `codex`, `windsurf`, `other`. Set in prompt.config.js; run `prompt-guide install` to apply. |
 
 Example: `tool: 'codex'` then `prompt-guide install` creates `AGENTS.md`.
+
+### Layers (merge order and paths)
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `layers.source` | string | Canonical Markdown tree for **`prompt-guide install`** (bundles + Cursor manifest). Default: `.claude`. |
+| `layers.manifest` | string | Project-relative path to **`layers.manifest.yml`** (ordered `system:` list and `review.path`). Default: `layers.manifest.yml`. |
+| `layers.initTargets` | optional | Rarely set by hand; extra copy destinations are usually added with **`init --layer-target`**. |
+
+See **`layers/README.md`** in this repo for layer folders and manifest editing.
 
 ### Model
 
@@ -212,12 +273,12 @@ taskPresets: {
 
 ### Platform-specific settings
 
-You can **select a platform** so that context and rules are merged for that platform (iOS, Android, Flutter, Web, Server). Base config is still used for model, system role, task presets, and rules; when a platform is active, its **context** and **rules** (from `prompts/rules.by-platform.yml`) are merged in.
+You can **select a platform** so that context and rules are merged for that stack. Use **`universal`** when you want **stack-agnostic** defaults (no extra `.gitignore` block beyond common; YAML key `universal` in `rules.by-platform.yml`). Use **`web`**, **`ios`**, **`server`**, etc. when the project clearly matches that stack for **tighter** context globs and platform prompts.
 
 | Key | Type | Description |
 |-----|------|-------------|
-| `platform` | string \| null | **Active platform.** Set to `ios`, `android`, `flutter`, `web`, or `server` to enable that platform’s overrides. `null` = use only base config. Can be set via config or env (e.g. `PLATFORM=ios`). |
-| `platforms.<id>` | object | Per-platform overrides. `<id>` must match a key in `prompts/rules.by-platform.yml` (ios, android, flutter, web, server). |
+| `platform` | string \| null | **Active platform.** `universal` = default, infer stack from repo. `ios`, `android`, `flutter`, `web`, `server` = enable that stack’s overrides. `null` = base config only (same idea as `universal` for many tools). |
+| `platforms.<id>` | object | Per-platform overrides. `<id>` must match a key in `prompts/rules.by-platform.yml` (`universal`, `ios`, `android`, `flutter`, `web`, `server`). |
 | `platforms.<id>.label` | string | Display name (e.g. "iOS", "Android"). |
 | `platforms.<id>.context.include` | list of strings | **Context allow-list for this platform.** When this platform is active, these paths are used (and replace the base `context.include`). Adjust to your repo layout (e.g. `ios/**`, `android/**`, `lib/**`). |
 | `platforms.<id>.context.exclude` | list of strings | Optional. Extra deny patterns for this platform. Merged with base `context.exclude`. |
@@ -276,8 +337,18 @@ Global rules applied to all presets. Your tool should interpret these as strict 
 ```
 your-project/
 ├── prompt.config.js          # Single source: tool, platform, model, context, taskPresets (edit this)
+├── .claude/                  # default layers.source — core/, context/, … at folder root (no …/ai/)
+│   ├── core/                 # rules, constraints, style
+│   ├── context/              # product, architecture, domain
+│   ├── memory/               # decisions, patterns, bugs
+│   ├── actions/              # coding, debugging, reviewing
+│   ├── agents/               # backend, frontend, infra
+│   └── runtime/              # task.md, plan.md (session execution context)
+├── .cursor/                  # same layer tree (+ .cursor/rules/ after install)
+├── codex/                    # same layer tree
+├── .windsurf/                # same layer tree
 ├── prompts/
-│   ├── system.core.yml      # System role / default (prompt key = injected text)
+│   ├── system.core.yml      # Fallback when layers absent; else still used for platform YAML + presets
 │   ├── review.yml           # Review prompt (checklist, approval criteria)
 │   ├── rules.by-platform.yml
 │   └── guide.template.yml
@@ -290,8 +361,9 @@ your-project/
 
 | Path | Role |
 |------|------|
-| `prompt.config.js` | **Config.** tool, platform, model, context, prompts paths, taskPresets, platforms, rules. Run `prompt-guide install` after edits. |
-| `prompts/system.core.yml` | **System role / default.** Contains `meta` and `prompt` (the actual system prompt text). |
+| `prompt.config.js` | **Config.** tool, platform, `layers.source`, model, context, prompts paths, taskPresets, platforms, rules. Run `prompt-guide install` after edits. |
+| `.claude/` (and `.cursor/`, `codex/`, `.windsurf/`) | **Layered context** (see `layers/README.md`). `init` copies the same template into all four roots (no `…/ai/`). **`prompt-guide install` reads only `layers.source`** (default `.claude`). |
+| `prompts/system.core.yml` | **Fallback system role** when layered `core/rules.md` is not present; otherwise still used for `rules.by-platform.yml` and task preset paths. |
 | `prompts/review.yml` | **Review mode.** Contains `prompt` used for code review preset. |
 | `prompts/rules.by-platform.yml` | **Platform add-ons.** `platforms.<ios\|android\|flutter\|web\|server>.prompt` (and `common`). |
 | `prompts/guide.template.yml` | **Ad-hoc tasks.** Field definitions to fill for one-off prompts. |
@@ -304,8 +376,9 @@ your-project/
 
 ### Applying the system role
 
-- Your tool should read the file at `prompts.default` (e.g. `prompts/system.core.yml`), parse the YAML, and use the **`prompt`** key value as the system message for the AI.
-- That file is the single source for the default system role.
+- **If `layers.source/core/rules.md` exists:** treat that tree as primary — follow the load order in `layers/README.md` (core → context → memory → actions → agents → runtime when relevant).
+- **Otherwise:** read `prompts.default` (e.g. `prompts/system.core.yml`), parse the YAML, and use the **`prompt`** key as the system message.
+- **`prompt-guide install`** embeds the layered markdown from `layers.source` (when present) into Codex / Claude / Windsurf outputs. **Cursor** gets two rules: `use-prompt-guide.mdc` (how layers work) and **`read-ai-context-manifest.mdc`** (numbered list of every `.md` under `layers.source`) so agents **open those paths** explicitly. Do not block the canonical tree in **`.cursorignore`**.
 
 ### Using task presets
 

@@ -11,8 +11,8 @@ The same structure works for **any project** (language and framework agnostic).
 
 | Command | Description |
 |---------|-------------|
-| `prompt-guide init` | Create **prompt.config.js** and copy prompts/, docs/ in the current directory; add platform-specific .gitignore. Use `-p <platform>` and `-t <tool>` or interactive. |
-| `prompt-guide install` | Read **prompt.config.js** and generate **tool-specific** rule files (Cursor → .cursor/rules/, Codex → AGENTS.md, Windsurf → .windsurfrules, Claude Code → .claude/rules/). |
+| `prompt-guide init` | Create **prompt.config.js** and copy **prompts/**, **docs/**, and the **layers/** template into **`.cursor/`**, **`.claude/`**, **`codex/`**, **`.windsurf/`** (same layout; no `…/ai/`); optional **`--layer-target`** for more. Add platform-specific .gitignore. Use `-p <platform>` and `-t <tool>` or interactive. |
+| `prompt-guide install` | Read **prompt.config.js** and generate **tool-specific** rule files. If **`layers.source/core/rules.md`** exists (default `.claude`), bundled rules for Codex / Claude / Windsurf are built from that tree; otherwise from **YAML** (`prompts.default` / `prompts.review`). |
 | `prompt-guide init --dry-run` | Show what would be done without writing files. |
 | `prompt-guide install --dry-run` | Show which files would be written for the current tool. |
 | `prompt-guide doctor` | Check presence of prompt.config.js, prompts/, docs/, .gitignore. |
@@ -29,16 +29,17 @@ The same structure works for **any project** (language and framework agnostic).
 | **prompt.config.js** | tool, platform, model, context, prompts paths, taskPresets, platforms, rules. **Single source.** Edit and run `prompt-guide install` to apply. | CLI init |
 | **prompts/** | system.core.yml, review.yml, rules.by-platform.yml, guide.template.yml. | CLI init / manual copy |
 | **docs/** | system.core.md, review.md, rules-by-platform.md, etc. | CLI init / manual copy |
+| **`.cursor/`**, **`.claude/`**, **`codex/`**, **`.windsurf/`** | Same layered Markdown in each (see `layers/README.md`). No `…/ai/` subfolder. | CLI init / manual copy |
 | **.gitignore** (block) | Common + chosen platform ignore patterns. | CLI init (varies by platform) |
 
 **install** adds (depending on `tool` in prompt.config.js):
 
 | Path | Description | When |
 |------|-------------|------|
-| **.cursor/rules/use-prompt-guide.mdc** | Cursor rule that references prompt.config.js and prompts/. | `tool: 'cursor'` |
+| **.cursor/rules/use-prompt-guide.mdc** | Cursor rule: **`layers.source`** hierarchy + `prompt.config.js` + `prompts/`. | `tool: 'cursor'` |
 | **AGENTS.md** | Codex project instructions (system + review summary). | `tool: 'codex'` |
 | **.windsurfrules** | Windsurf project rules (condensed, &lt;6k chars). | `tool: 'windsurf'` |
-| **.claude/rules/prompt-guide-*.md** | Claude Code rule files (core + review). | `tool: 'claude'` |
+| **.claude/rules/ai-*.md** | Claude Code rule files (core + review). | `tool: 'claude'` |
 
 See **[rules-by-tool.md](rules-by-tool.md)** for where each tool reads rules.
 

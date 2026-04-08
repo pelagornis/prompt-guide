@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Copy repo root docs/, prompts/, .cursor/ into cli/ (package root).
- * Run from cli/ in prepublishOnly. No cli/templates/ — only cli/docs, cli/prompts, cli/.cursor.
+ * Copy repo root docs/, prompts/, layers/, .cursor/ into cli/ (package root).
+ * Run from cli/ in prepublishOnly.
  */
 
 const fs = require('fs');
@@ -23,7 +23,7 @@ function copyRecursive(src, dest) {
   }
 }
 
-for (const dir of ['docs', 'prompts', '.cursor']) {
+for (const dir of ['docs', 'prompts', 'layers', '.cursor']) {
   const src = path.join(repoRoot, dir);
   const dest = path.join(pkgRoot, dir);
   if (fs.existsSync(src)) {
@@ -31,4 +31,11 @@ for (const dir of ['docs', 'prompts', '.cursor']) {
     copyRecursive(src, dest);
     console.log('  copied', dir, '-> cli/' + dir);
   }
+}
+
+const claudeMd = path.join(repoRoot, 'CLAUDE.md');
+const claudeDest = path.join(pkgRoot, 'CLAUDE.md');
+if (fs.existsSync(claudeMd)) {
+  fs.copyFileSync(claudeMd, claudeDest);
+  console.log('  copied CLAUDE.md -> cli/CLAUDE.md');
 }

@@ -1,0 +1,30 @@
+# Layer manifest — paths are relative to `layers.source` in prompt.config.js
+# (default: .claude). Edit `docs/prompt-guide/**/*.md`, then run `prompt-guide install`
+# to emit `prompt:` YAML under layers.source and tool mirrors (`.cursor/`, `codex/`, …).
+# Missing files are skipped (no error). Empty files are skipped.
+version: 1
+
+system:
+  - core/rules.yml
+  - core/constraints.yml
+  - core/style.yml
+  - context/product.yml
+  - context/architecture.yml
+  - context/domain.yml
+  - memory/decisions.yml
+  - memory/patterns.yml
+  - memory/bugs.yml
+  - actions/coding.yml
+  - actions/debugging.yml
+  - agents/backend.yml
+  - agents/frontend.yml
+  - agents/infra.yml
+
+review:
+  path: actions/reviewing.yml
+
+# Optional: how Cursor lists files in read-ai-context-manifest.mdc
+# - all: every .md / .yml / .yaml under layers.source (default install behavior)
+# - system: only files listed in `system` above (plus review if you add it manually to rules)
+cursor:
+  list: all

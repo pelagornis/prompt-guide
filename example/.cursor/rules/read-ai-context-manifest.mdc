@@ -1,0 +1,35 @@
+---
+description: MUST read these layered context files — explicit paths for agents (prompt-guide)
+alwaysApply: true
+---
+
+# Read all layered context files (`.claude/`)
+
+**MUST:** For any task that touches this repo’s rules, product, architecture, or review standards, **open and read every path below** (in order) using your file-reading tool. Relying on memory or search snippets alone is **not** enough.
+
+**Why:** Some UIs do not auto-index dot-directories; an explicit list guarantees coverage.
+
+## Files (read in order)
+
+1. `.claude/README.md`
+2. `.claude/actions/coding.yml`
+3. `.claude/actions/debugging.yml`
+4. `.claude/actions/reviewing.yml`
+5. `.claude/agents/backend.yml`
+6. `.claude/agents/frontend.yml`
+7. `.claude/agents/infra.yml`
+8. `.claude/context/architecture.yml`
+9. `.claude/context/domain.yml`
+10. `.claude/context/product.yml`
+11. `.claude/core/constraints.yml`
+12. `.claude/core/rules.yml`
+13. `.claude/core/style.yml`
+14. `.claude/memory/bugs.yml`
+15. `.claude/memory/decisions.yml`
+16. `.claude/memory/patterns.yml`
+17. `.claude/runtime/plan.yml`
+18. `.claude/runtime/task.yml`
+
+---
+
+After reading, apply layers as described in `use-prompt-guide.mdc` and `.claude/README.md`.

@@ -1,61 +1,27 @@
-# Example — test project
+# Example (CLI 검증용)
 
-This folder is a **sample project** for testing the **prompt-guide CLI**.  
-It includes `prompt.config.js`, `prompts/`, and `docs/` so you can run `install` and `doctor` right away.
+이 폴더는 **`prompt-guide init`** / **`prompt-guide install`** 결과를 그대로 두어 CLI를 끝까지 검증합니다.
 
-## How to test
+## 레이어 편집 위치
 
-### 1. From this repo (at root)
+- **사람이 고치는 곳**: `docs/prompt-guide/**/*.md` (레이어 트리와 동일한 경로)
+- **`install`이 만드는 곳**: `prompt.config.js`의 `layers.source`(기본 `.claude`)와 미러 루트(`.cursor/`, `codex/`, `.windsurf/`) 아래 **같은 상대 경로의 `*.yml`** (`prompt:` 키)
 
-```bash
-# Run CLI from example folder
-npm run example:install   # prompt-guide install in example/
-npm run example:doctor     # prompt-guide doctor in example/
-```
+`layers.manifest.yml`은 `layers.source` 기준으로 **`.yml`** 경로를 가리킵니다.
 
-Or directly:
+## 저장소 루트에서 재생성
 
 ```bash
-cd example
+rm -rf example && mkdir example && cd example
+node ../cli/bin/cli.js init -y
 node ../cli/bin/cli.js install
 node ../cli/bin/cli.js doctor
 ```
 
-### 2. With globally installed CLI
+한 줄:
 
 ```bash
-cd example
-prompt-guide install
-prompt-guide doctor
+rm -rf example && mkdir example && cd example && node ../cli/bin/cli.js init -y && node ../cli/bin/cli.js install && node ../cli/bin/cli.js doctor
 ```
 
-### 3. Testing init (overwrites)
-
-You can use this `example` folder as the init target. **Existing contents will be overwritten.**
-
-```bash
-cd example
-prompt-guide init -y
-prompt-guide install
-```
-
-## What’s included
-
-| Path | Description |
-|------|-------------|
-| `prompt.config.js` | Sample config (tool: cursor, platform: web) |
-| `prompts/` | system.core, review, rules.by-platform, guide.template |
-| `docs/` | Rule summaries in Markdown |
-
-**Note:** `prompt-guide install` only uses **`tool`** and **`prompts.default`** / **`prompts.review`**. `taskPresets`, `platforms`, `rules`, `model`, and `context` live only in the config file; the CLI does not embed them in generated files. (They are defined so other tools can read `prompt.config.js`.)
-
-When you run `prompt-guide install`, the **CLI reads `prompt.config.js` and `prompts/*.yml`** and **generates** the following based on **`tool`**:
-
-- **cursor** → `.cursor/rules/use-prompt-guide.mdc`
-- **codex** → `AGENTS.md`
-- **windsurf** → `.windsurfrules`
-- **claude** → `.claude/rules/prompt-guide-*.md`
-
-→ To change behavior, **edit `prompt.config.js` or `prompts/`**, then run **`prompt-guide install`** again. Do not edit generated files by hand; they are overwritten on each install.
-
-Generated files are ignored by `example/.gitignore` (they only exist locally when you run the CLI).
+첫 실행 전: 루트에서 `npm run build`, 템플릿을 바꿨다면 `cd cli && node scripts/copy-templates.cjs`.

@@ -1,0 +1,28 @@
+# Core — rules (always apply)
+
+MUST: Apply the same bar of evidence, honesty, and scope control **regardless of stack** (language, runtime, UI, CLI, library, firmware, batch, or multi-tenant SaaS). Only `context/`, `memory/`, or `agents/` may add **domain-specific** requirements.
+
+MUST NOT: Assume mobile, web, or server — infer constraints from the **repository** and filled `context/` files.
+
+## Role and response
+
+MUST: Understand the request, use loaded context (`context/`, `memory/`, `runtime/`), and only deliver actionable output.
+MUST: If requirements are ambiguous, state one reasonable interpretation, then proceed.
+MUST: Structure answers (steps, code blocks, `path:line`). For alternatives, one line: recommendation + reason.
+MUST NOT: Present guesses as facts; label uncertainty and how to verify.
+
+## Collaboration
+
+MUST: Reply in the user’s language for natural language; follow repo conventions for code and identifiers.
+MUST: When citing code, use path and line.
+MUST: Before finishing — style matches repo, errors handled, no secrets, tests or validation considered, existing behavior preserved unless explicitly changed.
+
+## Documentation
+
+MUST: Comments explain **why**, not **what** (names/structure show what). Document complex logic and business rules.
+MUST: Document public surfaces (purpose, arguments, return values, errors, side effects) in whatever form this repo uses (docstrings, specs, README, OpenAPI, etc.).
+MUST: No silent breaking or behavior changes without checking call sites and compatibility.
+
+## Exceptions
+
+Relax or skip a rule **only** when the user explicitly says so (e.g. “ignore style for this edit”). Otherwise all MUST rules here apply.

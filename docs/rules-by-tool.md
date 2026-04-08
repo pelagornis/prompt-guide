@@ -1,6 +1,6 @@
 # Rules by tool — Where each AI environment reads rules
 
-Prompt Guide keeps a **single source of truth** in `prompt.config.js` and `prompts/*.yml`.  
+Prompt Guide keeps a **single source of truth** in `prompt.config.js`, layered **`layers.source` Markdown** (default `.claude/`), and `prompts/*.yml`.  
 Each AI tool (Cursor, Claude Code, Codex, Windsurf, etc.) has **its own** way to load project rules. This doc summarizes where and how so you can align prompt-guide with the tool you chose. **`prompt-guide install`** reads `prompt.config.js` and generates the right files for your chosen `tool`.
 
 ---
@@ -24,8 +24,8 @@ Each AI tool (Cursor, Claude Code, Codex, Windsurf, etc.) has **its own** way to
   - `alwaysApply: true` — included every session
   - `globs: "**/*.ts"` — applied when matching files are open
   - `description: "..."` — for rule picker / agent relevance
-- **Behavior**: Cursor does **not** auto-read `prompt.config.js` or `prompts/`. Prompt Guide’s CLI installs `.cursor/rules/use-prompt-guide.mdc` so the agent reads and applies `prompt.config.js` and `prompts/` when relevant.
-- **Prompt-guide fit**: Keep rules in `prompts/*.yml`; Cursor rule instructs the AI to use those files. Optional: duplicate critical rules into `.cursor/rules/*.mdc` for always-on or file-scoped application.
+- **Behavior**: Cursor does **not** auto-read arbitrary folders. Prompt Guide installs **`use-prompt-guide.mdc`** (how to use layers) and **`read-ai-context-manifest.mdc`** when `layers.source` exists — a numbered list of every `.md` under that path so the agent **must open those paths** with file tools. Do not block `layers.source` in `.cursorignore`.
+- **Prompt-guide fit**: Primary context under `layers.source` (and mirrored folders from `init`); YAML in `prompts/` for presets and optional `rules.by-platform.yml`. Re-run `install` after changing `tool`; edit layered Markdown without reinstalling.
 
 ---
 
@@ -34,7 +34,7 @@ Each AI tool (Cursor, Claude Code, Codex, Windsurf, etc.) has **its own** way to
 - **Where**: `.claude/rules/` (all `.md` files, including subdirs). Main project instructions: `CLAUDE.md` or `.claude/CLAUDE.md`.
 - **Format**: Markdown. Optional YAML frontmatter with `paths: "src/**/*.ts"` so the rule applies only when editing matching paths.
 - **Behavior**: Automatically discovers and loads all `.md` in `.claude/rules/` (same priority as main CLAUDE.md). Path-specific rules save context by loading only when relevant.
-- **Prompt-guide fit**: **`prompt-guide install`** (when `tool: 'claude'`) writes `.claude/rules/prompt-guide-core.md` and `prompt-guide-review.md` with the prompt content from `prompts/system.core.yml` and `prompts/review.yml`. You can also reference `prompt.config.js` in a rule if you want Claude Code to read the config directly.
+- **Prompt-guide fit**: **`prompt-guide install`** (when `tool: 'claude'`) writes `.claude/rules/ai-core.md` and `ai-review.md` with the prompt content from `prompts/system.core.yml` and `prompts/review.yml`. You can also reference `prompt.config.js` in a rule if you want Claude Code to read the config directly.
 
 ---
 

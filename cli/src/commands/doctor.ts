@@ -2,12 +2,19 @@ import fs from 'node:fs';
 import path from 'node:path';
 import chalk from 'chalk';
 import type { Platform } from '../schemas.js';
-import { findConfigPath, loadPromptConfig } from '../lib/load-config.js';
+import {
+  findConfigPath,
+  loadPromptConfig,
+  getLayersSource,
+  getLayersManifestPath,
+  getStackProfile,
+} from '../lib/load-config.js';
 import { mergeGitignore } from '../lib/gitignore.js';
 import { readPromptFromYaml } from '../lib/read-prompts.js';
+import { hasAiHierarchy } from '../lib/read-ai-layered.js';
 
 const GITIGNORE_MARKER = '# prompt-guide (added by prompt-guide-cli)';
-const PLATFORMS: Platform[] = ['ios', 'android', 'flutter', 'web', 'server'];
+const PLATFORMS: Platform[] = ['universal', 'ios', 'android', 'flutter', 'web', 'server'];
 
 const BAR = chalk.dim('  ' + '─'.repeat(44));
 
@@ -15,13 +22,13 @@ export type DoctorResult = { ok: boolean; message: string; hint?: string };
 
 function getPlatformFromCwd(cwd: string): Platform {
   const configPath = findConfigPath(cwd);
-  if (!configPath) return 'web';
+  if (!configPath) return 'universal';
   try {
     const config = loadPromptConfig(cwd);
-    const p = (config.platform || 'web').toLowerCase();
-    return PLATFORMS.includes(p as Platform) ? (p as Platform) : 'web';
+    const p = getStackProfile(config).toLowerCase();
+    return PLATFORMS.includes(p as Platform) ? (p as Platform) : 'universal';
   } catch {
-    return 'web';
+    return 'universal';
   }
 }
 
@@ -42,6 +49,21 @@ export function runDoctor(
       const config = loadPromptConfig(cwd);
       const tool = config.tool || 'cursor';
       results.push({ ok: true, message: `prompt.config.js exists (tool=${tool})` });
+      const layersSource = getLayersSource(config);
+      if (hasAiHierarchy(cwd, layersSource)) {
+        results.push({ ok: true, message: `layered context (${layersSource})` });
+      }
+      const manifestPath = getLayersManifestPath(cwd, config);
+      if (fs.existsSync(manifestPath)) {
+        results.push({
+          ok: true,
+          message: `layers manifest (${path.relative(cwd, manifestPath) || 'layers.manifest.yml'})`,
+        });
+      }
+      const claudeMd = path.join(cwd, 'CLAUDE.md');
+      if (fs.existsSync(claudeMd)) {
+        results.push({ ok: true, message: 'CLAUDE.md (Claude Code root instructions)' });
+      }
       // Check that prompt files referenced in config exist
       const defaultPath = config.prompts?.default ?? 'prompts/system.core.yml';
       const reviewPath = config.prompts?.review ?? 'prompts/review.yml';

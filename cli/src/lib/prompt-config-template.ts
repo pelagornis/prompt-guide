@@ -1,9 +1,45 @@
 import type { Platform, Tool } from '../schemas.js';
+import { DEFAULT_DOCS_AUTHORING, DEFAULT_LAYERS_SOURCE, DEFAULT_LAYERS_MANIFEST } from './layer-paths.js';
+
+export type PromptConfigTemplateOptions = {
+  /** Canonical layered tree for `install` (default `.claude`). */
+  layersSource?: string;
+  /** Project-relative merge manifest (default `layers.manifest.yml`). */
+  layersManifest?: string;
+};
 
 /**
- * Generates the default prompt.config.js content with the given platform and tool.
+ * Generates the default prompt.config.js content with the given stack profile and tool.
+ * `stackProfile` selects `prompts/rules.by-platform.yml` + init `.gitignore` block (not “product platform”).
  */
-export function getPromptConfigTemplate(platform: Platform, tool: Tool): string {
+export function getPromptConfigTemplate(
+  stackProfile: Platform,
+  tool: Tool,
+  options: PromptConfigTemplateOptions = {}
+): string {
+  const src = options.layersSource ?? DEFAULT_LAYERS_SOURCE;
+  const manifest = options.layersManifest ?? DEFAULT_LAYERS_MANIFEST;
+  const docsAuthoring = DEFAULT_DOCS_AUTHORING;
+  const includeGlobs = [
+    'src/**',
+    'lib/**',
+    'app/**',
+    'packages/**',
+    `${docsAuthoring}/**`,
+    '.cursor/**',
+    '.claude/**',
+    'codex/**',
+    '.windsurf/**',
+    'CLAUDE.md',
+    'AGENTS.md',
+    manifest,
+  ];
+  const glob = `${src}/**`;
+  if (!includeGlobs.includes(glob)) includeGlobs.push(glob);
+  const includeJson = JSON.stringify(includeGlobs);
+  const layersSourceJson = JSON.stringify(src);
+  const layersManifestJson = JSON.stringify(manifest);
+
   return `/**
  * Prompt Guide config — single source for model, context, rules, and tool-specific install.
  * Edit this file, then run \`prompt-guide install\` to apply to your AI tool (Cursor, Codex, Windsurf, Claude Code, etc.).
@@ -11,15 +47,29 @@ export function getPromptConfigTemplate(platform: Platform, tool: Tool): string 
  */
 module.exports = {
   tool: '${tool}',
-  platform: '${platform}',
+  /** Active stack preset (rules YAML + gitignore). Change per repo when you switch projects. */
+  stackProfile: '${stackProfile}',
+  /** @deprecated Same as stackProfile — kept for older configs */
+  platform: '${stackProfile}',
 
   model: {
     default: 'claude-sonnet-4',
     options: ['claude-sonnet-4', 'claude-opus-4', 'gpt-4o', 'gpt-4o-mini'],
   },
 
+  layers: {
+    source: ${layersSourceJson},
+    manifest: ${layersManifestJson},
+    /** Author Markdown here (same paths as layer tree). \`install\` writes \`prompt:\` YAML under layers.source + mirrors. Set false to disable. */
+    docsAuthoring: ${JSON.stringify(docsAuthoring)},
+    /** Extra roots that receive the same generated YAML (rare). */
+    initTargets: [],
+    /** When true (default), Codex / Claude / Windsurf bundles use fewer tokens. */
+    bundleMinify: true,
+  },
+
   context: {
-    include: ['src/**', 'lib/**', 'app/**', 'packages/**'],
+    include: ${includeJson},
     exclude: [
       '**/.env', '**/.env.*', '**/secrets/**', '**/*secret*', '**/*credentials*',
       '**/*.pem', '**/*.key', '**/node_modules/**', '**/dist/**', '**/build/**',
@@ -44,6 +94,7 @@ module.exports = {
   },
 
   platforms: {
+    universal: { label: 'Universal', context: { include: ['src/**', 'lib/**', 'app/**', 'packages/**', 'internal/**', 'cmd/**', 'docs/**'] }, rules_key: 'universal' },
     ios: { label: 'iOS', context: { include: ['ios/**', '*.xcodeproj/**', 'Shared/**', 'src/**'] }, rules_key: 'ios' },
     android: { label: 'Android', context: { include: ['android/**', 'app/**', 'lib/**', 'src/**'] }, rules_key: 'android' },
     flutter: { label: 'Flutter', context: { include: ['lib/**', 'ios/**', 'android/**', 'test/**', 'pubspec.yaml'] }, rules_key: 'flutter' },

@@ -30,6 +30,9 @@ node_modules/
 `;
 
 const BY_PLATFORM: Record<Platform, string> = {
+  universal: `# prompt-guide (universal — stack-agnostic)
+# Add project-specific ignores below (e.g. build/, venv/, .gradle/).
+`,
   ios: `# prompt-guide (iOS)
 # Xcode / CocoaPods
 Pods/

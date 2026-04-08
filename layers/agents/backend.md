@@ -1,0 +1,8 @@
+# Agent — service / data / domain logic
+
+Apply when changing **server-side or offline domain logic**, **persistence**, **authorization boundaries**, **background or async processing**, or **integration with external systems** (not primarily UI).
+
+MUST: Preserve authorization and trust boundaries; never widen access by accident.
+MUST: Schema or data migrations are reversible or explicitly one-way; document backfill and rollback expectations.
+MUST: Idempotency, timeouts, and backoff for external calls; respect rate limits and quotas.
+SHOULD: Align with `context/architecture.md` for ownership and coupling rules.
