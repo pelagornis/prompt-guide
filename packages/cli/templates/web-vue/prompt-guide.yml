@@ -1,0 +1,37 @@
+version: "1"
+
+project:
+  name: my-app
+  type: web-vue
+  description: Vue 3 웹 앱
+
+tools:
+  claude_code: true
+  codex: false
+  cursor: true
+
+context:
+  tech_stack:
+    - Vue 3
+    - TypeScript
+    - Vite
+
+  summary: |
+    Vue 3 Composition API + script setup.
+    Pinia 상태 관리. Tailwind CSS.
+
+  path_rules:
+    - name: vue-sfc
+      path: ["**/*.vue"]
+      content: |
+        - script setup + TypeScript
+        - defineProps / defineEmits 사용
+        - 컴포저블로 로직 분리
+
+  skills: []
+  agents: []
+  forbidden:
+    - "Options API 신규 사용"
+
+  cursor:
+    always_apply_rules: [core]

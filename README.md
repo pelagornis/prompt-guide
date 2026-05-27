@@ -1,6 +1,6 @@
 # Prompt Guide
 
-**CLI project, not a project template.** This repo is a tool that adds a single config file and rule templates to any project. Install globally (`npm i -g @pelagornis/prompt-guide`), run **`prompt-guide init`** to create **`prompt.config.js`**, **`layers.manifest.yml`**, **`CLAUDE.md`**, and copy **`prompts/`**, **`docs/`**, and the layered Markdown tree into **`.cursor/`**, **`.claude/`**, **`codex/`**, **`.windsurf/`** (same layout at each root; **no** `…/ai/` subfolder), then run **`prompt-guide install`** to generate **tool-specific rules** (Cursor, Codex, Windsurf, Claude Code). All behavior is defined in `prompt.config.js` (`tool`, `platform`, `layers.source`, `layers.manifest`, model, context, task presets). See **[CLI commands](#cli-commands--cli-명령어)** below.
+**CLI project, not a project template.** This repo is a tool that adds a single config file and rule templates to any project. Install globally (`npm i -g @pelagornis/prompt-guide`), run **`prompt-guide init`** to create **`prompt.config.js`**, **`layers.manifest.yml`**, **`CLAUDE.md`**, and copy **`prompts/`**, **`docs/`**, and the layered Markdown tree into **`.cursor/`**, **`.claude/`**, **`codex/`** (same layout at each root; **no** `…/ai/` subfolder), then run **`prompt-guide install`** to generate **tool-specific rules** (Cursor, Codex, Claude Code). All behavior is defined in `prompt.config.js` (`tool`, `platform`, `layers.source`, `layers.manifest`, model, context, task presets). See **[CLI commands](#cli-commands--cli-명령어)** below.
 
 ---
 
@@ -24,7 +24,7 @@
 
 Prompt Guide gives you a **single JS config** (`prompt.config.js`) that controls:
 
-- **Which AI tool** to target (cursor, claude, codex, windsurf, other). **`prompt-guide install`** reads this and writes the right rule files for that tool.
+- **Which AI tool** to target (cursor, claude, codex, other). **`prompt-guide install`** reads this and writes the right rule files for that tool.
 - **Which model** runs by default and per task (e.g. review vs. implement).
 - **What context** is sent to the model: allow-list and deny-list paths so secrets and build artifacts are never included.
 - **How strict** the AI behaves: global rules (no hallucination, cite sources, stay in scope, etc.).
@@ -46,7 +46,7 @@ Prompt Guide gives you a **single JS config** (`prompt.config.js`) that controls
 | **System role** | Single source: `prompts.default` points to `prompts/system.core.yml`; `prompt-guide install` injects its `prompt` key into tool-specific outputs. |
 | **Platform-specific config** | Set `platform: ios` (or android, flutter, web, server) to use per-platform context and rules; each platform has its own `context.include` and `rules_key` into `rules.by-platform.yml`. |
 | **Human-readable docs** | Rule summaries in `docs/*.md` so people can read the rules without parsing YAML. |
-| **Tool-specific rules** | Each AI tool (Cursor, Claude Code, Codex, Windsurf) reads rules from different paths and formats. See [docs/rules-by-tool.md](docs/rules-by-tool.md). |
+| **Tool-specific rules** | Each AI tool (Cursor, Claude Code, Codex) reads rules from different paths and formats. See [docs/rules-by-tool.md](docs/rules-by-tool.md). |
 | **CLI** | `init`, `install`, `doctor` — see [CLI commands](#cli-commands--cli-명령어). Maintainer notes: [cli/README.md](cli/README.md). |
 
 ---
@@ -59,11 +59,11 @@ Install once globally (e.g. on macOS), then run from any directory:
 ```bash
 npm i -g @pelagornis/prompt-guide
 prompt-guide init          # creates prompt.config.js + prompts/ + docs/ + layered Markdown under .claude/
-prompt-guide install       # generates rules for your tool (Cursor, Codex, Windsurf, Claude Code)
+prompt-guide install       # generates rules for your tool (Cursor, Codex, Claude Code)
 # or: prompt-guide init --platform=ios --tool=codex
 ```
 
-No need to add the package to your project’s `package.json`. **init** creates `prompt.config.js` and copies `prompts/`, `docs/`, and the **layers/** tree into **`.cursor/`**, **`.claude/`**, **`codex/`**, **`.windsurf/`**; **install** reads the config and writes tool-specific rule files (e.g. `.cursor/rules/`, `AGENTS.md`, `.windsurfrules`, `.claude/rules/`). See [cli/README.md](cli/README.md).
+No need to add the package to your project’s `package.json`. **init** creates `prompt.config.js` and copies `prompts/`, `docs/`, and the **layers/** tree into **`.cursor/`**, **`.claude/`**, **`codex/`**; **install** reads the config and writes tool-specific rule files (e.g. `.cursor/rules/`, `AGENTS.md`, `.claude/rules/`). See [cli/README.md](cli/README.md).
 
 Alternatively, one-off: `npx @pelagornis/prompt-guide init` then `npx @pelagornis/prompt-guide install`
 
@@ -88,7 +88,7 @@ Alternatively, one-off: `npx @pelagornis/prompt-guide init` then `npx @pelagorni
 | 옵션 | 설명 |
 |------|------|
 | `-p`, `--platform <platform>` | `universal` \| `web` \| `server` \| `ios` \| `android` \| `flutter` (생략 시 대화형; 기본 비대화형·`-y`는 `universal`) |
-| `-t`, `--tool <tool>` | `cursor` \| `claude` \| `codex` \| `windsurf` \| `other` |
+| `-t`, `--tool <tool>` | `cursor` \| `claude` \| `codex` \| `other` |
 | `-y`, `--yes` | 비대화형: 플랫폼·도구 기본값(`web`, `cursor`) 사용 |
 | `--dry-run` | 파일을 쓰지 않고 할 일만 출력 |
 | `--layers-source <path>` | `layers.source`에 쓸 경로 (기본: `.claude`) |
@@ -130,7 +130,7 @@ Alternatively, one-off: `npx @pelagornis/prompt-guide init` then `npx @pelagorni
 **Option B — Manual**  
 1. Copy `prompt.config.js` (or create from [template](cli/src/lib/prompt-config-template.ts)) and copy `prompts/`, `docs/` into your project.
 2. **Edit `prompt.config.js`**:
-   - Set `tool` to your AI environment (`cursor`, `claude`, `codex`, `windsurf`, `other`).
+   - Set `tool` to your AI environment (`cursor`, `claude`, `codex`, `other`).
    - Set `model.default` to your tool’s model id (e.g. `claude-sonnet-4`, `gpt-4o`).
    - Set `context.include` to your source paths (e.g. `src/**`, `app/**`, `lib/**`).
    - Optionally set `platform` and adjust `platforms.<id>.context.include` for that platform’s paths.
@@ -144,8 +144,8 @@ Alternatively, one-off: `npx @pelagornis/prompt-guide init` then `npx @pelagorni
 
 **Any project** uses one config file and optional tool-generated rule files.
 
-- **init**: Creates `prompt.config.js`, `layers.manifest.yml`, `CLAUDE.md`, copies `prompts/`, `docs/`, and the **layers/** tree into **`.cursor/`**, **`.claude/`**, **`codex/`**, **`.windsurf/`** (+ optional **`--layer-target`**; platform-specific `.gitignore`).
-- **install**: Reads `prompt.config.js` and writes **tool-specific** rule files: for **Cursor** `.cursor/rules/`, for **Codex** `AGENTS.md`, for **Windsurf** `.windsurfrules`, for **Claude Code** `.claude/rules/`. Change `tool` in config and run install again to switch.
+- **init**: Creates `prompt.config.js`, `layers.manifest.yml`, `CLAUDE.md`, copies `prompts/`, `docs/`, and the **layers/** tree into **`.cursor/`**, **`.claude/`**, **`codex/`** (+ optional **`--layer-target`**; platform-specific `.gitignore`).
+- **install**: Reads `prompt.config.js` and writes **tool-specific** rule files: for **Cursor** `.cursor/rules/`, for **Codex** `AGENTS.md`, for **Claude Code** `.claude/rules/`. Change `tool` in config and run install again to switch.
 - **Which feature adds what**: see **[docs/what-install.md](docs/what-install.md)** for a detailed map:
   - What each path adds (prompt.config.js vs prompts vs docs).
   - What each config section controls (model, context, taskPresets, platforms).
@@ -164,7 +164,7 @@ Which AI editor or API you use. **`prompt-guide install`** uses this to write th
 
 | Key | Type | Description |
 |-----|------|-------------|
-| `tool` | string | One of: `cursor`, `claude`, `codex`, `windsurf`, `other`. Set in prompt.config.js; run `prompt-guide install` to apply. |
+| `tool` | string | One of: `cursor`, `claude`, `codex`, `other`. Set in prompt.config.js; run `prompt-guide install` to apply. |
 
 Example: `tool: 'codex'` then `prompt-guide install` creates `AGENTS.md`.
 
@@ -346,7 +346,6 @@ your-project/
 │   └── runtime/              # task.md, plan.md (session execution context)
 ├── .cursor/                  # same layer tree (+ .cursor/rules/ after install)
 ├── codex/                    # same layer tree
-├── .windsurf/                # same layer tree
 ├── prompts/
 │   ├── system.core.yml      # Fallback when layers absent; else still used for platform YAML + presets
 │   ├── review.yml           # Review prompt (checklist, approval criteria)
@@ -356,19 +355,19 @@ your-project/
 │   ├── system.core.md
 │   ├── review.md
 │   └── rules-by-platform.md
-└── (after prompt-guide install, one of: .cursor/rules/ | AGENTS.md | .windsurfrules | .claude/rules/)
+└── (after prompt-guide install, one of: .cursor/rules/ | AGENTS.md | .claude/rules/)
 ```
 
 | Path | Role |
 |------|------|
 | `prompt.config.js` | **Config.** tool, platform, `layers.source`, model, context, prompts paths, taskPresets, platforms, rules. Run `prompt-guide install` after edits. |
-| `.claude/` (and `.cursor/`, `codex/`, `.windsurf/`) | **Layered context** (see `layers/README.md`). `init` copies the same template into all four roots (no `…/ai/`). **`prompt-guide install` reads only `layers.source`** (default `.claude`). |
+| `.claude/` (and `.cursor/`, `codex/`) | **Layered context** (see `layers/README.md`). `init` copies the same template into all three roots (no `…/ai/`). **`prompt-guide install` reads only `layers.source`** (default `.claude`). |
 | `prompts/system.core.yml` | **Fallback system role** when layered `core/rules.md` is not present; otherwise still used for `rules.by-platform.yml` and task preset paths. |
 | `prompts/review.yml` | **Review mode.** Contains `prompt` used for code review preset. |
 | `prompts/rules.by-platform.yml` | **Platform add-ons.** `platforms.<ios\|android\|flutter\|web\|server>.prompt` (and `common`). |
 | `prompts/guide.template.yml` | **Ad-hoc tasks.** Field definitions to fill for one-off prompts. |
 | `docs/*.md` | **Human docs.** Summaries of the rules in Markdown. |
-| `.cursor/rules/`, `AGENTS.md`, `.windsurfrules`, `.claude/rules/` | **Generated by install.** Tool-specific rule files; do not edit by hand if you re-run install. |
+| `.cursor/rules/`, `AGENTS.md`, `.claude/rules/` | **Generated by install.** Tool-specific rule files; do not edit by hand if you re-run install. |
 
 ---
 
@@ -378,7 +377,7 @@ your-project/
 
 - **If `layers.source/core/rules.md` exists:** treat that tree as primary — follow the load order in `layers/README.md` (core → context → memory → actions → agents → runtime when relevant).
 - **Otherwise:** read `prompts.default` (e.g. `prompts/system.core.yml`), parse the YAML, and use the **`prompt`** key as the system message.
-- **`prompt-guide install`** embeds the layered markdown from `layers.source` (when present) into Codex / Claude / Windsurf outputs. **Cursor** gets two rules: `use-prompt-guide.mdc` (how layers work) and **`read-ai-context-manifest.mdc`** (numbered list of every `.md` under `layers.source`) so agents **open those paths** explicitly. Do not block the canonical tree in **`.cursorignore`**.
+- **`prompt-guide install`** embeds the layered markdown from `layers.source` (when present) into Codex / Claude outputs. **Cursor** gets two rules: `use-prompt-guide.mdc` (how layers work) and **`read-ai-context-manifest.mdc`** (numbered list of every `.md` under `layers.source`) so agents **open those paths** explicitly. Do not block the canonical tree in **`.cursorignore`**.
 
 ### Using task presets
 

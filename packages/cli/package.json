@@ -1,0 +1,28 @@
+{
+  "name": "@prompt-guide/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "prompt-guide": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && cp -r ../../templates ./templates",
+    "dev": "bun run --watch src/index.ts",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@prompt-guide/adapter-claude": "workspace:*",
+    "@prompt-guide/adapter-codex": "workspace:*",
+    "@prompt-guide/adapter-cursor": "workspace:*",
+    "@prompt-guide/adapters": "workspace:*",
+    "@prompt-guide/core": "workspace:*",
+    "@prompt-guide/schema": "workspace:*",
+    "@clack/prompts": "^0.9.1",
+    "citty": "^0.1.6",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "typescript": "^5.7.2"
+  }
+}

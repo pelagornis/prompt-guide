@@ -1,0 +1,23 @@
+{
+  "name": "@prompt-guide/adapter-cursor",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/adapter.d.ts",
+      "import": "./dist/adapter.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@prompt-guide/adapters": "workspace:*",
+    "@prompt-guide/schema": "workspace:*",
+    "neverthrow": "^8.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,17 +1,24 @@
 {
-  "name": "root",
-  "version": "1.0.0",
+  "name": "prompt-guide",
   "private": true,
-  "description": "Config-driven prompt guide for AI-assisted coding (YAML + CLI)",
+  "type": "module",
+  "description": "Claude Code, Codex CLI, Cursor 설정을 단일 prompt-guide.yml로 통합 관리",
   "license": "MIT",
-  "workspaces": [
-    "cli"
-  ],
   "scripts": {
-    "build": "npm run build -w @pelagornis/prompt-guide",
-    "init": "node cli/bin/cli.js init",
-    "cli": "FORCE_COLOR=1 node cli/bin/cli.js",
-    "example:install": "cd example && node ../cli/bin/cli.js install",
-    "example:doctor": "cd example && node ../cli/bin/cli.js doctor"
-  }
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "biome check packages templates",
+    "format": "biome format --write packages templates",
+    "pg": "node packages/cli/dist/index.js"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@changesets/cli": "^2.27.10",
+    "@types/node": "^22.10.5",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.5"
+  },
+  "packageManager": "pnpm@10.9.0"
 }

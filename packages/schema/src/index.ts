@@ -1,0 +1,16 @@
+export {
+  AgentSchema,
+  ContextSchema,
+  CursorConfigSchema,
+  HookEntrySchema,
+  McpServerSchema,
+  PathRuleSchema,
+  ProjectTypeSchema,
+  PromptGuideConfigSchema,
+  SkillSchema,
+  type Agent,
+  type PathRule,
+  type ProjectType,
+  type PromptGuideConfig,
+  type Skill,
+} from "./config.schema.js";

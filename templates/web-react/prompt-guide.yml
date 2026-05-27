@@ -1,0 +1,39 @@
+version: "1"
+
+project:
+  name: my-app
+  type: web-react
+  description: React 웹 앱
+
+tools:
+  claude_code: true
+  codex: false
+  cursor: true
+
+context:
+  tech_stack:
+    - React
+    - TypeScript
+    - Vite
+
+  summary: |
+    React + TypeScript SPA. 함수형 컴포넌트 + hooks.
+    any 타입 금지. Tailwind CSS 우선.
+
+  path_rules:
+    - name: react-components
+      path: ["**/*.{tsx,jsx}"]
+      description: React 컴포넌트 규칙
+      content: |
+        - 함수형 컴포넌트 + hooks
+        - Props는 interface로 정의
+        - 불필요한 useEffect 지양
+
+  skills: []
+  agents: []
+  forbidden:
+    - "any 타입 사용"
+    - "console.log 커밋"
+
+  cursor:
+    always_apply_rules: [core]

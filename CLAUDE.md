@@ -6,7 +6,7 @@ This repository uses **[prompt-guide](https://github.com/pelagornis/prompt-guide
 
 1. **`prompt.config.js`** — `tool`, `platform`, **`layers.source`**, **`layers.manifest`**, context, task presets.
 2. **`layers.manifest.yml`** (repo root) — ordered **`system:`** paths relative to `layers.source`; **`review.path`** for review mode.
-3. **Layer tree** under **`layers.source`** (default `.claude/`) — **`init`** copies the same layout to **`.cursor/`**, **`.claude/`**, **`codex/`**, **`.windsurf/`** (no `…/ai/` subfolder).
+3. **Layer tree** under **`layers.source`** (default `.claude/`) — **`init`** copies the same layout to **`.cursor/`**, **`.claude/`**, **`codex/`** (no `…/ai/` subfolder).
 
 Prefer **opening those Markdown files** over assuming a single monolithic instruction block.
 

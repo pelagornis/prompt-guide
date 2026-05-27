@@ -1,0 +1,28 @@
+{
+  "name": "@prompt-guide/core",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "test": "vitest run --config ../../vitest.config.ts"
+  },
+  "dependencies": {
+    "@prompt-guide/schema": "workspace:*",
+    "cosmiconfig": "^9.0.0",
+    "deepmerge-ts": "^7.1.5",
+    "js-yaml": "^4.1.0",
+    "neverthrow": "^8.2.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.5"
+  }
+}
