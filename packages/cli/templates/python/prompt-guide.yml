@@ -3,7 +3,7 @@ version: "1"
 project:
   name: my-app
   type: python
-  description: Python 프로젝트
+  description: Python project
 
 tools:
   claude_code: true
@@ -17,21 +17,21 @@ context:
     - Pydantic
 
   summary: |
-    FastAPI 백엔드. type hints 필수. ruff 포맷.
+    FastAPI backend. Type hints required. ruff formatting.
 
   path_rules:
     - name: python-src
       path: ["**/*.py"]
       content: |
-        - type hints 필수
-        - async 엔드포인트는 async def
-        - bare except 금지
+        - Type hints required
+        - async endpoints use async def
+        - No bare except
 
   skills: []
   agents: []
   forbidden:
     - "bare except"
-    - "print() 디버그 로그 커밋"
+    - "Committing print() debug logs"
 
   cursor:
     always_apply_rules: [core]

@@ -23,22 +23,80 @@ async function loadTypeTemplate(type: ProjectType) {
   }
 }
 
+type RemoteTemplateSource = {
+  owner: string;
+  repo: string;
+  ref: string;
+  path: string;
+};
+
+function parseRemoteSource(from: string): RemoteTemplateSource | null {
+  if (from.startsWith("https://github.com/")) {
+    const url = new URL(from);
+    const segments = url.pathname.split("/").filter(Boolean);
+    if (segments.length < 2) return null;
+
+    const owner = segments[0];
+    const repo = segments[1];
+    if (!owner || !repo) return null;
+
+    const kind = segments[2];
+    const ref = segments[3];
+    const rest = segments.slice(4);
+    if (kind === "blob" && ref && rest.length > 0) {
+      return { owner, repo, ref, path: rest.join("/") };
+    }
+
+    return { owner, repo, ref: "main", path: "prompt-guide.yml" };
+  }
+
+  const [repoWithPath = "", refPart] = from.split("@");
+  const [owner, repo, ...rest] = repoWithPath.split("/");
+  if (!owner || !repo) return null;
+
+  return {
+    owner,
+    repo,
+    ref: refPart || "main",
+    path: rest.length > 0 ? rest.join("/") : "prompt-guide.yml",
+  };
+}
+
+async function loadRemoteTemplate(from: string) {
+  const parsed = parseRemoteSource(from);
+  if (!parsed) return null;
+
+  const url = `https://raw.githubusercontent.com/${parsed.owner}/${parsed.repo}/${parsed.ref}/${parsed.path}`;
+  const res = await fetch(url);
+  if (!res.ok) return null;
+
+  const raw = await res.text();
+  return yaml.load(raw) as Record<string, unknown>;
+}
+
 export const initCommand = defineCommand({
-  meta: { description: "프로젝트 초기화 (대화형)" },
-  async run() {
+  meta: { description: "Initialize project (interactive)" },
+  args: {
+    git: {
+      type: "string",
+      description:
+        "Remote template (owner/repo/path[@ref] or github.com/.../blob/... URL)",
+    },
+  },
+  async run({ args }) {
     p.intro("prompt-guide");
 
     const answers = await p.group(
       {
         name: () =>
           p.text({
-            message: "프로젝트 이름",
+            message: "Project name",
             placeholder: "my-app",
-            validate: (v) => (v.length < 1 ? "필수 입력" : undefined),
+            validate: (v) => (v.length < 1 ? "Required" : undefined),
           }),
         type: () =>
           p.select({
-            message: "프로젝트 타입",
+            message: "Project type",
             options: [
               { value: "ios-swift", label: "iOS / Swift" },
               { value: "web-react", label: "Web / React" },
@@ -50,7 +108,7 @@ export const initCommand = defineCommand({
           }),
         tools: () =>
           p.multiselect({
-            message: "사용할 AI 툴 (스페이스바로 선택)",
+            message: "AI tools to enable (space to select)",
             options: [
               { value: "claude_code", label: "Claude Code", hint: ".claude/" },
               { value: "codex", label: "Codex CLI", hint: "AGENTS.md" },
@@ -60,25 +118,45 @@ export const initCommand = defineCommand({
           }),
         tech_stack: () =>
           p.text({
-            message: "기술 스택 (쉼표 구분)",
+            message: "Tech stack (comma-separated)",
             placeholder: "SwiftUI, AlarmKit, LiveActivity",
           }),
         description: () =>
           p.text({
-            message: "프로젝트 설명 (선택)",
-            placeholder: "AlarmKit 기반 알람 앱",
+            message: "Project description (optional)",
+            placeholder: "AlarmKit-based alarm app",
           }),
       },
       {
         onCancel: () => {
-          p.cancel("취소됨");
+          p.cancel("Cancelled");
           process.exit(0);
         },
       },
     );
 
     const projectType = answers.type as ProjectType;
-    const template = await loadTypeTemplate(projectType);
+    const git = args.git ? String(args.git) : "";
+    let template: Record<string, unknown> | null = null;
+
+    if (git) {
+      try {
+        template = await loadRemoteTemplate(git);
+        if (!template) {
+          p.log.warn(
+            `Failed to load remote template: ${git} (falling back to local template)`,
+          );
+        }
+      } catch {
+        p.log.warn(
+          `Failed to load remote template: ${git} (falling back to local template)`,
+        );
+      }
+    }
+
+    if (!template) {
+      template = await loadTypeTemplate(projectType);
+    }
     const tools = answers.tools as string[];
 
     const techFromInput = String(answers.tech_stack)
@@ -122,7 +200,7 @@ export const initCommand = defineCommand({
       "utf-8",
     );
 
-    p.log.success("prompt-guide.yml 생성 완료");
-    p.outro("`prompt-guide sync` 로 설정 파일을 생성하세요.");
+    p.log.success("Created prompt-guide.yml");
+    p.outro("Run `prompt-guide sync` to generate tool config files.");
   },
 });

@@ -16,10 +16,10 @@ import { generateSettingsJson } from "./generators/settings-json.js";
 import { generateSkills } from "./generators/skills.js";
 
 const BLOCK_DANGEROUS_HOOK = `#!/bin/bash
-# 위험한 명령어 차단 훅
+# Block dangerous commands hook
 COMMAND="$BASH_COMMAND"
 if echo "$COMMAND" | grep -qE "rm -rf|DROP TABLE|format C:"; then
-  echo "차단: 위험한 명령어 감지됨 - $COMMAND"
+  echo "Blocked: dangerous command detected - $COMMAND"
   exit 2
 fi`;
 
@@ -51,12 +51,12 @@ export class ClaudeAdapter implements Adapter {
 
   validate(config: PromptGuideConfig): Result<void, string[]> {
     const errors: string[] = [];
-    if (!config.project.name) errors.push("project.name 필요");
+    if (!config.project.name) errors.push("project.name is required");
 
     const summaryTokens = (config.context.summary ?? "").length / 4;
     if (summaryTokens > 375) {
       errors.push(
-        `context.summary가 너무 김 (≈${Math.round(summaryTokens)} 토큰, 권장 ≤375)`,
+        `context.summary is too long (≈${Math.round(summaryTokens)} tokens, recommended ≤375)`,
       );
     }
 

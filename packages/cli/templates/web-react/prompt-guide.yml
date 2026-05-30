@@ -3,7 +3,7 @@ version: "1"
 project:
   name: my-app
   type: web-react
-  description: React 웹 앱
+  description: React web app
 
 tools:
   claude_code: true
@@ -17,23 +17,23 @@ context:
     - Vite
 
   summary: |
-    React + TypeScript SPA. 함수형 컴포넌트 + hooks.
-    any 타입 금지. Tailwind CSS 우선.
+    React + TypeScript SPA. Functional components + hooks.
+    No any types. Prefer Tailwind CSS.
 
   path_rules:
     - name: react-components
       path: ["**/*.{tsx,jsx}"]
-      description: React 컴포넌트 규칙
+      description: React component rules
       content: |
-        - 함수형 컴포넌트 + hooks
-        - Props는 interface로 정의
-        - 불필요한 useEffect 지양
+        - Functional components + hooks
+        - Define props with interface
+        - Avoid unnecessary useEffect
 
   skills: []
   agents: []
   forbidden:
-    - "any 타입 사용"
-    - "console.log 커밋"
+    - "Using any type"
+    - "Committing console.log"
 
   cursor:
     always_apply_rules: [core]

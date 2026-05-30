@@ -3,7 +3,7 @@ import * as p from "@clack/prompts";
 import { defineCommand } from "citty";
 
 export const validateCommand = defineCommand({
-  meta: { description: "prompt-guide.yml 검증" },
+  meta: { description: "Validate prompt-guide.yml" },
   async run() {
     const result = await resolveConfig(process.cwd());
     if (result.isErr()) {
@@ -12,10 +12,10 @@ export const validateCommand = defineCommand({
           p.log.error(issue);
         }
       } else {
-        p.log.error(`검증 실패: ${result.error.type}`);
+        p.log.error(`Validation failed: ${result.error.type}`);
       }
       process.exit(1);
     }
-    p.log.success("유효한 설정입니다.");
+    p.log.success("Configuration is valid.");
   },
 });

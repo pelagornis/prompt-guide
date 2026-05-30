@@ -6,11 +6,11 @@ import * as p from "@clack/prompts";
 import { defineCommand } from "citty";
 
 export const statusCommand = defineCommand({
-  meta: { description: "현재 생성된 파일 상태 확인" },
+  meta: { description: "Show status of generated files" },
   async run() {
     const configResult = await resolveConfig(process.cwd());
     if (configResult.isErr()) {
-      p.log.error("prompt-guide.yml 로드 실패");
+      p.log.error("Failed to load prompt-guide.yml");
       process.exit(1);
     }
 
@@ -21,7 +21,7 @@ export const statusCommand = defineCommand({
       ...(config.tools.cursor ? [new CursorAdapter()] : []),
     ];
 
-    p.intro(`프로젝트: ${config.project.name}`);
+    p.intro(`Project: ${config.project.name}`);
 
     for (const adapter of adapters) {
       const diffs = await adapter.diff(config, process.cwd());
@@ -30,10 +30,10 @@ export const statusCommand = defineCommand({
       const unchanged = diffs.filter((d) => d.status === "unchanged").length;
 
       p.log.info(
-        `[${adapter.name}] 생성 예정 ${created} · 변경 ${updated} · 동일 ${unchanged}`,
+        `[${adapter.name}] to create ${created} · to update ${updated} · unchanged ${unchanged}`,
       );
     }
 
-    p.outro("상세 diff는 `prompt-guide diff` 실행");
+    p.outro("Run `prompt-guide diff` for details");
   },
 });

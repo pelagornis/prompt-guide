@@ -6,7 +6,7 @@
     "prompt-guide": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && cp -r ../../templates ./templates",
+    "build": "tsc -p tsconfig.json && rm -rf ./templates && cp -r ../../templates ./templates",
     "dev": "bun run --watch src/index.ts",
     "test": "vitest run --passWithNoTests"
   },

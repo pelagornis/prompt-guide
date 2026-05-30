@@ -8,17 +8,17 @@ export function generateRulesMdc(config: PromptGuideConfig): GeneratedFile[] {
 
   const coreFrontmatter = ["---", "alwaysApply: true", "---"].join("\n");
   const coreBody = [
-    "# 핵심 규칙",
+    "# Core rules",
     "",
-    "## 실행 원칙",
-    "- 동의 전 가정 검증. 기존 코드 먼저 파악.",
-    "- 최소 변경 원칙. 재사용 가능 코드 탐색 후 구현.",
-    "- 변경 전 계획 제시, 확인 후 진행.",
+    "## Execution principles",
+    "- Validate assumptions before acting. Read existing code first.",
+    "- Minimal change principle. Reuse before implementing.",
+    "- Present a plan before changes; proceed after confirmation.",
     "",
   ];
 
   if (context.forbidden.length) {
-    coreBody.push("## 절대 금지");
+    coreBody.push("## Forbidden");
     for (const f of context.forbidden) {
       coreBody.push(`- ${f}`);
     }

@@ -10,7 +10,7 @@ import { syncCommand } from "./commands/sync.js";
 import { validateCommand } from "./commands/validate.js";
 
 const main = defineCommand({
-  meta: { name: "prompt-guide", description: "AI 툴 설정 통합 관리" },
+  meta: { name: "prompt-guide", description: "Unified AI tool configuration" },
   subCommands: {
     init: initCommand,
     sync: syncCommand,
@@ -18,7 +18,7 @@ const main = defineCommand({
     validate: validateCommand,
     status: statusCommand,
     add: defineCommand({
-      meta: { description: "새 설정 항목 추가" },
+      meta: { description: "Add configuration entries" },
       subCommands: {
         skill: addSkillCommand,
         rule: addRuleCommand,

@@ -4,27 +4,27 @@ import { defineCommand } from "citty";
 import yaml from "js-yaml";
 
 export const addSkillCommand = defineCommand({
-  meta: { description: "새 skill 추가" },
+  meta: { description: "Add a new skill" },
   async run() {
     const answers = await p.group(
       {
         name: () =>
           p.text({
-            message: "Skill 이름 (kebab-case)",
+            message: "Skill name (kebab-case)",
             placeholder: "generate-view",
           }),
         description: () =>
           p.text({
-            message: "설명 (언제 자동 활성화되는지)",
-            placeholder: "SwiftUI 뷰 생성",
+            message: "Description (when it auto-invokes)",
+            placeholder: "Create SwiftUI view",
           }),
         auto_invoke: () =>
           p.confirm({
-            message: "파일 관련 작업 시 자동 활성화?",
+            message: "Auto-invoke for file-related tasks?",
             initialValue: false,
           }),
         prompt: () =>
-          p.text({ message: "지침 내용", placeholder: "1. ... 2. ..." }),
+          p.text({ message: "Instructions", placeholder: "1. ... 2. ..." }),
       },
       { onCancel: () => process.exit(0) },
     );
@@ -48,7 +48,7 @@ export const addSkillCommand = defineCommand({
       "utf-8",
     );
     p.log.success(
-      `skill '${answers.name}' 추가됨. \`prompt-guide sync\` 로 반영하세요.`,
+      `Added skill '${answers.name}'. Run \`prompt-guide sync\` to apply.`,
     );
   },
 });

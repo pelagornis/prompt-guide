@@ -8,33 +8,33 @@ import { defineCommand } from "citty";
 import { writeGeneratedFiles } from "../lib/write-files.js";
 
 export const syncCommand = defineCommand({
-  meta: { description: "모든 툴 설정 파일 생성/갱신" },
+  meta: { description: "Generate or update all tool config files" },
   args: {
     "dry-run": {
       type: "boolean",
       default: false,
-      description: "실제 파일 쓰기 없이 미리보기",
+      description: "Preview without writing files",
     },
     tool: {
       type: "string",
-      description: "claude | codex | cursor (특정 툴만)",
+      description: "claude | codex | cursor (single tool only)",
     },
   },
   async run({ args }) {
     const s = p.spinner();
-    s.start("prompt-guide.yml 로딩 중");
+    s.start("Loading prompt-guide.yml");
 
     const configResult = await resolveConfig(process.cwd());
     if (configResult.isErr()) {
-      s.stop("실패");
+      s.stop("Failed");
       if (configResult.error.type === "NOT_FOUND") {
         p.log.error(
-          "prompt-guide.yml 없음. `prompt-guide init` 먼저 실행하세요.",
+          "prompt-guide.yml not found. Run `prompt-guide init` first.",
         );
       } else if (configResult.error.type === "VALIDATION_ERROR") {
-        p.log.error(`검증 실패:\n${configResult.error.issues.join("\n")}`);
+        p.log.error(`Validation failed:\n${configResult.error.issues.join("\n")}`);
       } else {
-        p.log.error(`설정 로드 실패: ${configResult.error.type}`);
+        p.log.error(`Failed to load config: ${configResult.error.type}`);
       }
       process.exit(1);
     }
@@ -52,12 +52,12 @@ export const syncCommand = defineCommand({
       : allAdapters;
 
     if (!adapters.length) {
-      s.stop("완료");
-      p.log.warn("활성화된 어댑터 없음. prompt-guide.yml의 tools 섹션 확인.");
+      s.stop("Done");
+      p.log.warn("No active adapters. Check the tools section in prompt-guide.yml.");
       process.exit(0);
     }
 
-    s.message(`[${adapters.map((a) => a.name).join(", ")}] 생성 중`);
+    s.message(`Generating [${adapters.map((a) => a.name).join(", ")}]`);
 
     const dryRun = Boolean(args["dry-run"]);
     let totalFiles = 0;
@@ -86,6 +86,6 @@ export const syncCommand = defineCommand({
       }
     }
 
-    s.stop(`완료 — ${totalFiles}개 파일 처리`);
+    s.stop(`Done — processed ${totalFiles} file(s)`);
   },
 });

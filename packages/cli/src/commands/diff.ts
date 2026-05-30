@@ -13,11 +13,11 @@ const icons = {
 } as const;
 
 export const diffCommand = defineCommand({
-  meta: { description: "변경될 파일 미리보기" },
+  meta: { description: "Preview files that would change" },
   async run() {
     const configResult = await resolveConfig(process.cwd());
     if (configResult.isErr()) {
-      p.log.error("설정 로드 실패");
+      p.log.error("Failed to load configuration");
       process.exit(1);
     }
 

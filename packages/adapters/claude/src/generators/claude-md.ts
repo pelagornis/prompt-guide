@@ -11,18 +11,18 @@ export function generateClaudeMd(config: PromptGuideConfig): GeneratedFile[] {
 
   if (context.tech_stack.length) {
     lines.push(
-      `\n## 기술 스택\n${context.tech_stack.map((t) => `- ${t}`).join("\n")}`,
+      `\n## Tech stack\n${context.tech_stack.map((t) => `- ${t}`).join("\n")}`,
     );
   }
 
   if (context.forbidden.length) {
     lines.push(
-      `\n## 절대 금지\n${context.forbidden.map((f) => `- ${f}`).join("\n")}`,
+      `\n## Forbidden\n${context.forbidden.map((f) => `- ${f}`).join("\n")}`,
     );
   }
 
   if (context.path_rules.length) {
-    lines.push("\n## 경로별 규칙");
+    lines.push("\n## Path rules");
     for (const rule of context.path_rules) {
       lines.push(
         `- @.claude/rules/${rule.name}.md — \`${rule.path.join(", ")}\``,
@@ -31,7 +31,7 @@ export function generateClaudeMd(config: PromptGuideConfig): GeneratedFile[] {
   }
 
   if (context.skills.length) {
-    lines.push("\n## 슬래시 커맨드");
+    lines.push("\n## Slash commands");
     for (const s of context.skills) {
       lines.push(`- /${s.name} — ${s.description.split("\n")[0]}`);
     }

@@ -10,22 +10,22 @@ export function generateAgentsMd(config: PromptGuideConfig): GeneratedFile[] {
 
   if (context.tech_stack.length) {
     lines.push(
-      `\n## 기술 스택\n${context.tech_stack.map((t) => `- ${t}`).join("\n")}`,
+      `\n## Tech stack\n${context.tech_stack.map((t) => `- ${t}`).join("\n")}`,
     );
   }
 
   if (context.summary) {
-    lines.push(`\n## 개요\n${context.summary}`);
+    lines.push(`\n## Overview\n${context.summary}`);
   }
 
   if (context.forbidden.length) {
     lines.push(
-      `\n## 절대 금지\n${context.forbidden.map((f) => `- ${f}`).join("\n")}`,
+      `\n## Forbidden\n${context.forbidden.map((f) => `- ${f}`).join("\n")}`,
     );
   }
 
   if (context.path_rules.length) {
-    lines.push("\n## 파일 타입별 규칙");
+    lines.push("\n## Rules by file type");
     for (const rule of context.path_rules) {
       lines.push(`\n### ${rule.name} (\`${rule.path.join(", ")}\`)`);
       lines.push(rule.content.trim());
@@ -33,7 +33,7 @@ export function generateAgentsMd(config: PromptGuideConfig): GeneratedFile[] {
   }
 
   if (context.skills.length) {
-    lines.push("\n## 반복 워크플로우");
+    lines.push("\n## Recurring workflows");
     for (const s of context.skills) {
       lines.push(`\n### ${s.name}\n${s.prompt.trim()}`);
     }

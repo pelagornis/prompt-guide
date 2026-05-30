@@ -5,9 +5,9 @@ export function generateConfigTomlGuide(
   config: PromptGuideConfig,
 ): GeneratedFile[] {
   const lines: string[] = [
-    "# Codex 글로벌 설정 안내",
+    "# Codex global configuration guide",
     "",
-    "`~/.codex/config.toml` 에 아래 내용을 추가하세요:",
+    "Add the following to `~/.codex/config.toml`:",
     "",
     "```toml",
     'model = "gpt-5.4"',
@@ -34,7 +34,7 @@ export function generateConfigTomlGuide(
   lines.push("```");
   lines.push("");
   lines.push(
-    "> Skills는 `~/.agents/skills/` 에 저장하면 Codex + Claude Code 공유 가능",
+    "> Store skills in `~/.agents/skills/` to share between Codex and Claude Code",
   );
 
   return [{ path: ".codex-setup.md", content: lines.join("\n") }];

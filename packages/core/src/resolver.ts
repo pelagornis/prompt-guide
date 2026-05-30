@@ -14,7 +14,7 @@ export type ResolveError =
 const yamlLoader = (_filepath: string, content: string) => {
   const parsed = yaml.load(content);
   if (parsed === null || parsed === undefined) {
-    throw new Error("YAML 파일이 비어 있습니다");
+    throw new Error("YAML file is empty");
   }
   return parsed;
 };

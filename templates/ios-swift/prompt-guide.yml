@@ -3,7 +3,7 @@ version: "1"
 project:
   name: my-app
   type: ios-swift
-  description: AlarmKit 기반 알람 앱
+  description: AlarmKit-based alarm app
 
 tools:
   claude_code: true
@@ -18,63 +18,63 @@ context:
     - DynamicIsland
 
   summary: |
-    AlarmKit 기반 iOS 알람 앱. SwiftUI + MVVM 아키텍처.
-    강제 언래핑 금지. async/await 우선. Preview 필수.
+    AlarmKit-based iOS alarm app. SwiftUI + MVVM architecture.
+    No force unwraps. Prefer async/await. Previews required.
 
   path_rules:
     - name: swift-ui
       path: ["**/*.swift"]
-      description: SwiftUI 및 Swift 파일 작업 규칙
+      description: SwiftUI and Swift file rules
       content: |
-        - @Observable 매크로 우선 (ObservableObject 지양)
-        - async/await 필수, Combine은 마이그레이션 대상
-        - Preview는 모든 View에 포함
-        - MVVM: View는 UI만, ViewModel은 비즈니스 로직만
+        - Prefer @Observable macro (avoid ObservableObject)
+        - async/await required; Combine is migration-only
+        - Include Preview on every View
+        - MVVM: View is UI only; ViewModel holds business logic
 
     - name: alarmkit
       path: ["**/Alarm*.swift", "**/LiveActivity*.swift"]
-      description: AlarmKit 및 LiveActivity 관련 파일 규칙
+      description: AlarmKit and LiveActivity file rules
       content: |
-        - AlarmKit countdown 방식 우선 (fixed-time 지양)
-        - LiveActivity는 AlarmKit.AlarmActivity 채택
-        - Dynamic Island: compact, expanded, minimal 모두 구현
+        - Prefer AlarmKit countdown (avoid fixed-time)
+        - LiveActivity uses AlarmKit.AlarmActivity
+        - Dynamic Island: implement compact, expanded, and minimal
 
     - name: tests
       path: ["**/*Tests.swift", "**/*Spec.swift"]
       content: |
-        - XCTest 사용
-        - 각 테스트 독립 실행 가능
-        - given/when/then 주석 구조
+        - Use XCTest
+        - Each test runs independently
+        - given/when/then comment structure
 
   skills:
     - name: generate-view
-      description: SwiftUI 뷰 + ViewModel 생성. Swift 파일 편집 시 자동 활성화.
+      description: Create SwiftUI view + ViewModel. Auto-invoke when editing Swift files.
       allowed_tools: [Read, Write, "Bash(swift:*)"]
       auto_invoke: true
       prompt: |
-        MVVM 패턴으로 SwiftUI 뷰를 생성한다:
-        1. $ARGUMENTS를 파싱해 뷰 이름, 데이터 타입 확인
-        2. ViewModel (@Observable) 먼저 작성
-        3. View 파일 작성 (Preview 포함)
-        4. 파일명은 PascalCase
+        Create a SwiftUI view using MVVM:
+        1. Parse $ARGUMENTS for view name and data types
+        2. Write ViewModel (@Observable) first
+        3. Write View file (include Preview)
+        4. Use PascalCase file names
 
     - name: review-pr
-      description: PR 코드 리뷰. diff 있을 때 요청 시 활성화.
+      description: PR code review. Invoke on request when diff is available.
       allowed_tools: [Read, "Bash(git:*)"]
       auto_invoke: false
       prompt: |
-        PR 코드를 리뷰한다:
-        1. git diff main으로 변경사항 확인
-        2. 아키텍처, 성능, 보안 순서로 검토
-        3. 한국어로 개선점 정리 출력
+        Review the PR:
+        1. Run git diff main to see changes
+        2. Review architecture, performance, then security
+        3. Summarize improvements in clear English
 
   agents:
     - name: reviewer
-      description: 코드 리뷰 전담 서브에이전트
+      description: Dedicated code review sub-agent
       tools: [Read, "Bash(git:*)"]
       prompt: |
-        변경된 코드를 리뷰하고 개선점을 한국어로 보고한다.
-        아키텍처 → 성능 → 보안 → 스타일 순서.
+        Review changed code and report improvements in English.
+        Order: architecture → performance → security → style.
 
   hooks:
     post_write:
@@ -87,9 +87,9 @@ context:
         timeout: 5
 
   forbidden:
-    - "강제 언래핑(!) 사용"
-    - "print() 디버그 로그 커밋"
-    - "새 의존성 무단 추가"
+    - "Force unwrap (!)"
+    - "Committing print() debug logs"
+    - "Adding dependencies without approval"
 
   cursor:
     always_apply_rules: [core]

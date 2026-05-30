@@ -1,40 +1,95 @@
-# Publish @pelagornis/prompt-guide to npm when a version tag (v*) is pushed.
-# Required: Add NPM_TOKEN (npm Automation token from https://www.npmjs.com/account/tokens) to repo Secrets.
+# Publish @prompt-guide/* packages to npm when a version tag is pushed.
+#
+# One-time npm setup (no NPM_TOKEN required):
+#   Package → Settings → Trusted publishers → GitHub Actions
+#   - Repository: pelagornis/prompt-guide (adjust if forked)
+#   - Workflow filename: release.yml
+#   Repeat for each published package scope, or configure at org level.
 name: Release to npm
 
 on:
   push:
     tags:
-      - "*"
+      - "v*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
-  contents: read
+  id-token: write
+  contents: write
 
 jobs:
   publish:
-    name: Publish @pelagornis/prompt-guide to npm
+    name: Publish @prompt-guide packages to npm
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.9.0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
+          cache: "pnpm"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Set version from tag
+      - name: Upgrade npm for trusted publishing
+        run: |
+          npm install -g npm@latest
+          node --version
+          npm --version
+
+      - name: Get version
+        id: get_version
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
           VERSION="${TAG#v}"
-          npm version "$VERSION" --no-git-tag-version --allow-same-version -w @pelagornis/prompt-guide
-          echo "Publishing @pelagornis/prompt-guide@$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Publishing @prompt-guide/*@$VERSION"
+
+      - name: Update package versions
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          find packages -name package.json -not -path '*/node_modules/*' | while read -r file; do
+            sed -i "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" "$file"
+          done
+          echo "Updated all package versions to $VERSION"
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
 
       - name: Publish to npm
-        run: npm publish -w @pelagornis/prompt-guide --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_RELEASE_TOKEN }}
+        run: |
+          unset NODE_AUTH_TOKEN
+          pnpm -r publish --access public --no-git-checks
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: v${{ steps.get_version.outputs.version }}
+          body: |
+            ## prompt-guide v${{ steps.get_version.outputs.version }}
+
+            ### Install
+            ```bash
+            npm install -g @prompt-guide/cli@${{ steps.get_version.outputs.version }}
+            ```
+
+            ### Usage
+            ```bash
+            prompt-guide init
+            prompt-guide sync
+            ```

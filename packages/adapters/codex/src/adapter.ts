@@ -30,7 +30,7 @@ export class CodexAdapter implements Adapter {
 
   validate(config: PromptGuideConfig): Result<void, string[]> {
     const errors: string[] = [];
-    if (!config.project.name) errors.push("project.name 필요");
+    if (!config.project.name) errors.push("project.name is required");
     return errors.length ? err(errors) : ok(undefined);
   }
 

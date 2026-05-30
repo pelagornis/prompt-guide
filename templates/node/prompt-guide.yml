@@ -3,7 +3,7 @@ version: "1"
 project:
   name: my-app
   type: node
-  description: Node.js 프로젝트
+  description: Node.js project
 
 tools:
   claude_code: true
@@ -16,21 +16,21 @@ context:
     - TypeScript
 
   summary: |
-    Node.js + TypeScript. ESM 모듈. strict 모드.
+    Node.js + TypeScript. ESM modules. strict mode.
 
   path_rules:
     - name: typescript
       path: ["**/*.{ts,tsx}"]
       content: |
         - strict TypeScript
-        - async/await 우선
-        - Result 패턴 또는 명시적 에러 처리
+        - Prefer async/await
+        - Result pattern or explicit error handling
 
   skills: []
   agents: []
   forbidden:
-    - "any 타입"
-    - "console.log 커밋"
+    - "any type"
+    - "Committing console.log"
 
   cursor:
     always_apply_rules: [core]

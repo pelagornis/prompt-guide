@@ -4,29 +4,29 @@ import { defineCommand } from "citty";
 import yaml from "js-yaml";
 
 export const addAgentCommand = defineCommand({
-  meta: { description: "새 agent 추가" },
+  meta: { description: "Add a new agent" },
   async run() {
     const answers = await p.group(
       {
         name: () =>
           p.text({
-            message: "Agent 이름 (kebab-case)",
+            message: "Agent name (kebab-case)",
             placeholder: "reviewer",
           }),
         description: () =>
           p.text({
-            message: "설명",
-            placeholder: "코드 리뷰 전담 서브에이전트",
+            message: "Description",
+            placeholder: "Dedicated code review sub-agent",
           }),
         tools: () =>
           p.text({
-            message: "허용 도구 (쉼표 구분)",
+            message: "Allowed tools (comma-separated)",
             placeholder: "Read, Bash(git:*)",
           }),
         prompt: () =>
           p.text({
-            message: "지침",
-            placeholder: "변경된 코드를 리뷰한다.",
+            message: "Instructions",
+            placeholder: "Review changed code.",
           }),
       },
       { onCancel: () => process.exit(0) },
@@ -53,7 +53,7 @@ export const addAgentCommand = defineCommand({
       "utf-8",
     );
     p.log.success(
-      `agent '${answers.name}' 추가됨. \`prompt-guide sync\` 로 반영하세요.`,
+      `Added agent '${answers.name}'. Run \`prompt-guide sync\` to apply.`,
     );
   },
 });

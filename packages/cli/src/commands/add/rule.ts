@@ -4,29 +4,29 @@ import { defineCommand } from "citty";
 import yaml from "js-yaml";
 
 export const addRuleCommand = defineCommand({
-  meta: { description: "새 path rule 추가" },
+  meta: { description: "Add a new path rule" },
   async run() {
     const answers = await p.group(
       {
         name: () =>
           p.text({
-            message: "Rule 이름 (kebab-case)",
+            message: "Rule name (kebab-case)",
             placeholder: "swift-ui",
           }),
         path: () =>
           p.text({
-            message: "glob 패턴 (쉼표 구분)",
+            message: "Glob patterns (comma-separated)",
             placeholder: "**/*.swift",
           }),
         description: () =>
           p.text({
-            message: "설명 (선택)",
-            placeholder: "Swift 파일 작업 규칙",
+            message: "Description (optional)",
+            placeholder: "Swift file rules",
           }),
         content: () =>
           p.text({
-            message: "규칙 내용",
-            placeholder: "- async/await 사용",
+            message: "Rule content",
+            placeholder: "- Use async/await",
           }),
       },
       { onCancel: () => process.exit(0) },
@@ -53,7 +53,7 @@ export const addRuleCommand = defineCommand({
       "utf-8",
     );
     p.log.success(
-      `rule '${answers.name}' 추가됨. \`prompt-guide sync\` 로 반영하세요.`,
+      `Added rule '${answers.name}'. Run \`prompt-guide sync\` to apply.`,
     );
   },
 });
