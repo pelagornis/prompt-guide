@@ -33,7 +33,9 @@ export function generateClaudeMd(config: PromptGuideConfig): GeneratedFile[] {
   if (context.skills.length) {
     lines.push("\n## Slash commands");
     for (const s of context.skills) {
-      lines.push(`- /${s.name} — ${s.description.split("\n")[0]}`);
+      lines.push(
+        `- /${s.name} — ${s.description.split("\n")[0]} (see \`.agents/skills/${s.name}/SKILL.md\`)`,
+      );
     }
   }
 

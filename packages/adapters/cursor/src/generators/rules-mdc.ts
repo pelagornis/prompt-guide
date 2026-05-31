@@ -1,5 +1,6 @@
 import type { GeneratedFile } from "@prompt-guide/adapters";
 import type { PromptGuideConfig } from "@prompt-guide/schema";
+import { generateCursorSkills } from "./skills.js";
 
 export function generateRulesMdc(config: PromptGuideConfig): GeneratedFile[] {
   const files: GeneratedFile[] = [];
@@ -52,19 +53,7 @@ export function generateRulesMdc(config: PromptGuideConfig): GeneratedFile[] {
     });
   }
 
-  for (const skill of context.skills) {
-    const frontmatter = [
-      "---",
-      `description: ${skill.description.trim().split("\n").join(" ")}`,
-      "alwaysApply: false",
-      "---",
-    ].join("\n");
-
-    files.push({
-      path: `.cursor/rules/skill-${skill.name}.mdc`,
-      content: `${frontmatter}\n\n${skill.prompt.trim()}`,
-    });
-  }
+  files.push(...generateCursorSkills(config));
 
   return files;
 }

@@ -1,7 +1,7 @@
 import { ClaudeAdapter } from "@prompt-guide/adapter-claude";
 import { CodexAdapter } from "@prompt-guide/adapter-codex";
 import { CursorAdapter } from "@prompt-guide/adapter-cursor";
-import type { Adapter } from "@prompt-guide/adapters";
+import { generateSharedSkillFiles, type Adapter } from "@prompt-guide/adapters";
 import { resolveConfig } from "@prompt-guide/core";
 import * as p from "@clack/prompts";
 import { defineCommand } from "citty";
@@ -80,6 +80,23 @@ export const syncCommand = defineCommand({
       }
 
       for (const file of result.value) {
+        const label = dryRun ? "[dry-run] " : "";
+        p.log.success(`${label}${file.path}`);
+        totalFiles++;
+      }
+    }
+
+    if (config.context.skills.length > 0) {
+      const sharedSkills = generateSharedSkillFiles(config);
+      if (!dryRun) {
+        const { written, skipped } = await writeGeneratedFiles(sharedSkills);
+        if (skipped > 0) {
+          p.log.info(
+            `Agent Skills: ${written} written, ${skipped} skipped (already exist)`,
+          );
+        }
+      }
+      for (const file of sharedSkills) {
         const label = dryRun ? "[dry-run] " : "";
         p.log.success(`${label}${file.path}`);
         totalFiles++;

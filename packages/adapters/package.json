@@ -10,13 +10,14 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --config ../../../vitest.config.ts"
   },
   "dependencies": {
     "@prompt-guide/schema": "workspace:*",
     "neverthrow": "^8.2.0"
   },
   "devDependencies": {
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.5"
   }
 }

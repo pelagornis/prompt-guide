@@ -3,6 +3,7 @@ import { defineCommand, runMain } from "citty";
 import { addAgentCommand } from "./commands/add/agent.js";
 import { addRuleCommand } from "./commands/add/rule.js";
 import { addSkillCommand } from "./commands/add/skill.js";
+import { doctorCommand } from "./commands/doctor.js";
 import { diffCommand } from "./commands/diff.js";
 import { initCommand } from "./commands/init.js";
 import { statusCommand } from "./commands/status.js";
@@ -16,6 +17,7 @@ const main = defineCommand({
     sync: syncCommand,
     diff: diffCommand,
     validate: validateCommand,
+    doctor: doctorCommand,
     status: statusCommand,
     add: defineCommand({
       meta: { description: "Add configuration entries" },
