@@ -2,7 +2,7 @@
   "name": "prompt-guide",
   "private": true,
   "type": "module",
-  "description": "Claude Code, Codex CLI, Cursor 설정을 단일 prompt-guide.yml로 통합 관리",
+  "description": "Unified Claude Code, Codex CLI, and Cursor configuration from prompt-guide.yml",
   "license": "MIT",
   "scripts": {
     "dev": "turbo run dev",
