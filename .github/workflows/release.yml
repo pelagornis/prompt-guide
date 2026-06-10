@@ -50,8 +50,7 @@ jobs:
       - name: Get version
         id: get_version
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
-          VERSION="${TAG#v}"
+          VERSION="${GITHUB_REF#refs/tags/}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Publishing @pelagornis/prompt-guide@$VERSION"
 
@@ -76,9 +75,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: v${{ steps.get_version.outputs.version }}
+          name: ${{ steps.get_version.outputs.version }}
           body: |
-            ## prompt-guide v${{ steps.get_version.outputs.version }}
+            ## prompt-guide ${{ steps.get_version.outputs.version }}
 
             ### Install
             ```bash

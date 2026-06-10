@@ -14,14 +14,14 @@ To create a new release, use the GitHub UI at: [Pelagornis Releases](https://git
 The **@pelagornis/prompt-guide** CLI package is published to npm via GitHub Actions when a **version tag** is pushed. Workspace packages under `packages/` stay private and are bundled into the CLI at build time.
 
 1. **One-time setup**: On [npmjs.com](https://www.npmjs.com/package/@pelagornis/prompt-guide), configure **Trusted publishers** (GitHub Actions OIDC) — repository `pelagornis/prompt-guide`, workflow `release.yml`. No `NPM_TOKEN` secret is required.
-2. **Release**: Create and push a tag matching `v*` (e.g. `v1.0.5`). The workflow [.github/workflows/release.yml](.github/workflows/release.yml) will bump `packages/cli/package.json` from the tag, build, and publish with OIDC trusted publishing.
+2. **Release**: Create and push a version tag (e.g. `1.0.5`). The workflow [.github/workflows/release.yml](.github/workflows/release.yml) will bump `packages/cli/package.json` from the tag, build, and publish with OIDC trusted publishing.
 
    ```bash
-   git tag v1.0.1
-   git push origin v1.0.1
+   git tag 1.0.5
+   git push origin 1.0.5
    ```
 
-   The tag version (e.g. `1.0.1`) is applied to all `packages/*/package.json` files in the workflow; you do not need to bump versions in the repo before tagging.
+   The tag name (e.g. `1.0.5`) is applied to `packages/cli/package.json` in the workflow; you do not need to bump versions in the repo before tagging.
 
 ### Versioning
 
