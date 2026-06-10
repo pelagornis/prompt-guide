@@ -374,7 +374,7 @@ import { Result, ok, err } from "neverthrow";
 import {
   PromptGuideConfigSchema,
   type PromptGuideConfig,
-} from "@prompt-guide/schema";
+} from "@pelagornis/prompt-guide-schema";
 
 export type ResolveError =
   | { type: "NOT_FOUND" }
@@ -413,7 +413,7 @@ export async function resolveConfig(
 
 ```typescript
 import { deepmerge } from "deepmerge-ts";
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 
 // 프로젝트 타입별 기본값 → 로컬 설정 순서로 merge
 export function mergeWithDefaults(
@@ -430,7 +430,7 @@ export function mergeWithDefaults(
 
 ```typescript
 import type { Result } from "neverthrow";
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 
 export interface GeneratedFile {
   path: string; // 프로젝트 루트 기준 상대경로
@@ -468,7 +468,7 @@ export interface Adapter {
 ```typescript
 import { ok, err } from "neverthrow";
 import type { Adapter, GeneratedFile } from "../../interface";
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 import { generateClaudeMd } from "./generators/claude-md";
 import { generateSettingsJson } from "./generators/settings-json";
 import { generateRules } from "./generators/rules";
@@ -553,7 +553,7 @@ fi`,
 ### `src/generators/claude-md.ts`
 
 ```typescript
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 import type { GeneratedFile } from "../../../interface";
 
 export function generateClaudeMd(config: PromptGuideConfig): GeneratedFile[] {
@@ -604,7 +604,7 @@ export function generateClaudeMd(config: PromptGuideConfig): GeneratedFile[] {
 ### `src/generators/settings-json.ts`
 
 ```typescript
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 import type { GeneratedFile } from "../../../interface";
 
 export function generateSettingsJson(
@@ -649,7 +649,7 @@ export function generateSettingsJson(
 ### `src/generators/rules.ts`
 
 ```typescript
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 import type { GeneratedFile } from "../../../interface";
 
 export function generateRules(config: PromptGuideConfig): GeneratedFile[] {
@@ -672,7 +672,7 @@ export function generateRules(config: PromptGuideConfig): GeneratedFile[] {
 ### `src/generators/skills.ts`
 
 ```typescript
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 import type { GeneratedFile } from "../../../interface";
 
 export function generateSkills(config: PromptGuideConfig): GeneratedFile[] {
@@ -706,7 +706,7 @@ export function generateSkills(config: PromptGuideConfig): GeneratedFile[] {
 ### `src/generators/agents.ts`
 
 ```typescript
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 import type { GeneratedFile } from "../../../interface";
 
 export function generateAgents(config: PromptGuideConfig): GeneratedFile[] {
@@ -730,7 +730,7 @@ export function generateAgents(config: PromptGuideConfig): GeneratedFile[] {
 ### `src/generators/mcp-json.ts`
 
 ```typescript
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 import type { GeneratedFile } from "../../../interface";
 
 export function generateMcpJson(config: PromptGuideConfig): GeneratedFile[] {
@@ -774,7 +774,7 @@ export function generateMcpJson(config: PromptGuideConfig): GeneratedFile[] {
 ### `src/generators/agents-md.ts`
 
 ```typescript
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 import type { GeneratedFile } from "../../../interface";
 
 export function generateAgentsMd(config: PromptGuideConfig): GeneratedFile[] {
@@ -827,7 +827,7 @@ export function generateAgentsMd(config: PromptGuideConfig): GeneratedFile[] {
 ### `src/generators/config-toml-guide.ts`
 
 ````typescript
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 import type { GeneratedFile } from "../../../interface";
 
 // ~/.codex/config.toml 은 글로벌 파일이므로 직접 쓰지 않고 안내 파일 생성
@@ -883,7 +883,7 @@ export function generateConfigTomlGuide(
 ### `src/generators/rules-mdc.ts`
 
 ```typescript
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 import type { GeneratedFile } from "../../../interface";
 
 export function generateRulesMdc(config: PromptGuideConfig): GeneratedFile[] {
@@ -1111,11 +1111,11 @@ export const initCommand = defineCommand({
 import * as p from "@clack/prompts";
 import { writeFile, mkdir, chmod } from "node:fs/promises";
 import { dirname } from "node:path";
-import { resolveConfig } from "@prompt-guide/core";
-import { ClaudeAdapter } from "@prompt-guide/adapter-claude";
-import { CodexAdapter } from "@prompt-guide/adapter-codex";
-import { CursorAdapter } from "@prompt-guide/adapter-cursor";
-import type { Adapter } from "@prompt-guide/adapters";
+import { resolveConfig } from "@pelagornis/prompt-guide-core";
+import { ClaudeAdapter } from "@pelagornis/prompt-guide-adapter-claude";
+import { CodexAdapter } from "@pelagornis/prompt-guide-adapter-codex";
+import { CursorAdapter } from "@pelagornis/prompt-guide-adapter-cursor";
+import type { Adapter } from "@pelagornis/prompt-guide-adapters";
 
 export const syncCommand = defineCommand({
   meta: { description: "모든 툴 설정 파일 생성/갱신" },
@@ -1196,10 +1196,10 @@ export const syncCommand = defineCommand({
 
 ```typescript
 import * as p from "@clack/prompts";
-import { resolveConfig } from "@prompt-guide/core";
-import { ClaudeAdapter } from "@prompt-guide/adapter-claude";
-import { CodexAdapter } from "@prompt-guide/adapter-codex";
-import { CursorAdapter } from "@prompt-guide/adapter-cursor";
+import { resolveConfig } from "@pelagornis/prompt-guide-core";
+import { ClaudeAdapter } from "@pelagornis/prompt-guide-adapter-claude";
+import { CodexAdapter } from "@pelagornis/prompt-guide-adapter-codex";
+import { CursorAdapter } from "@pelagornis/prompt-guide-adapter-cursor";
 
 export const diffCommand = defineCommand({
   meta: { description: "변경될 파일 미리보기" },

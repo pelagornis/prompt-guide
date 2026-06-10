@@ -1,6 +1,7 @@
 {
-  "name": "@prompt-guide/adapters",
+  "name": "@pelagornis/prompt-guide-adapters",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "exports": {
     ".": {
@@ -13,7 +14,7 @@
     "test": "vitest run --config ../../../vitest.config.ts"
   },
   "dependencies": {
-    "@prompt-guide/schema": "workspace:*",
+    "@pelagornis/prompt-guide-schema": "workspace:*",
     "neverthrow": "^8.2.0"
   },
   "devDependencies": {

@@ -1,16 +1,15 @@
-# Publish @prompt-guide/* packages to npm when a version tag is pushed.
+# Publish @pelagornis/prompt-guide to npm when a version tag is pushed.
 #
 # One-time npm setup (no NPM_TOKEN required):
-#   Package → Settings → Trusted publishers → GitHub Actions
-#   - Repository: pelagornis/prompt-guide (adjust if forked)
+#   @pelagornis/prompt-guide → Settings → Trusted publishers → GitHub Actions
+#   - Repository: pelagornis/prompt-guide
 #   - Workflow filename: release.yml
-#   Repeat for each published package scope, or configure at org level.
 name: Release to npm
 
 on:
   push:
     tags:
-      - "*"
+      - "v*"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,7 +21,7 @@ permissions:
 
 jobs:
   publish:
-    name: Publish @prompt-guide packages to npm
+    name: Publish @pelagornis/prompt-guide to npm
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -54,15 +53,13 @@ jobs:
           TAG="${GITHUB_REF#refs/tags/}"
           VERSION="${TAG#v}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Publishing @prompt-guide/*@$VERSION"
+          echo "Publishing @pelagornis/prompt-guide@$VERSION"
 
-      - name: Update package versions
+      - name: Update package version
         run: |
           VERSION="${{ steps.get_version.outputs.version }}"
-          find packages -name package.json -not -path '*/node_modules/*' | while read -r file; do
-            sed -i "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" "$file"
-          done
-          echo "Updated all package versions to $VERSION"
+          sed -i "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" packages/cli/package.json
+          echo "Updated packages/cli/package.json to $VERSION"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -73,7 +70,7 @@ jobs:
       - name: Publish to npm
         run: |
           unset NODE_AUTH_TOKEN
-          pnpm -r publish --access public --no-git-checks
+          pnpm --filter @pelagornis/prompt-guide publish --access public --no-git-checks
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -85,7 +82,7 @@ jobs:
 
             ### Install
             ```bash
-            npm install -g @prompt-guide/cli@${{ steps.get_version.outputs.version }}
+            npm install -g @pelagornis/prompt-guide@${{ steps.get_version.outputs.version }}
             ```
 
             ### Usage

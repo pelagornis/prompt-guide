@@ -5,8 +5,8 @@ import type {
   AdapterError,
   FileDiff,
   GeneratedFile,
-} from "@prompt-guide/adapters";
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+} from "@pelagornis/prompt-guide-adapters";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 import { err, ok, type Result } from "neverthrow";
 import { generateRulesMdc } from "./generators/rules-mdc.js";
 

@@ -1,6 +1,7 @@
 {
-  "name": "@prompt-guide/core",
+  "name": "@pelagornis/prompt-guide-core",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "exports": {
     ".": {
@@ -14,7 +15,7 @@
     "test": "vitest run --config ../../vitest.config.ts"
   },
   "dependencies": {
-    "@prompt-guide/schema": "workspace:*",
+    "@pelagornis/prompt-guide-schema": "workspace:*",
     "cosmiconfig": "^9.0.0",
     "deepmerge-ts": "^7.1.5",
     "js-yaml": "^4.1.0",

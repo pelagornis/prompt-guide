@@ -1,5 +1,5 @@
-import type { GeneratedFile } from "@prompt-guide/adapters";
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { GeneratedFile } from "@pelagornis/prompt-guide-adapters";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 
 /** Lean root AGENTS.md — shared by Codex and Cursor; details in linked files */
 export function generateAgentsMd(config: PromptGuideConfig): GeneratedFile[] {

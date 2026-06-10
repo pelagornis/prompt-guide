@@ -1,6 +1,7 @@
 {
-  "name": "@prompt-guide/schema",
+  "name": "@pelagornis/prompt-guide-schema",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "exports": {
     ".": {

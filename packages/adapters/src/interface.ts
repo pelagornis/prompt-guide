@@ -1,5 +1,5 @@
 import type { Result } from "neverthrow";
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 
 export interface GeneratedFile {
   path: string;

@@ -1,5 +1,5 @@
 import { deepmerge } from "deepmerge-ts";
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 
 export function mergeWithDefaults(
   local: PromptGuideConfig,

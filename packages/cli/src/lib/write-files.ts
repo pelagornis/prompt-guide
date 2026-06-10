@@ -1,7 +1,7 @@
 import { homedir } from "node:os";
 import { access, chmod, mkdir, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join } from "node:path";
-import type { GeneratedFile } from "@prompt-guide/adapters";
+import type { GeneratedFile } from "@pelagornis/prompt-guide-adapters";
 
 async function exists(path: string): Promise<boolean> {
   try {

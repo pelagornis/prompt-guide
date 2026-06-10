@@ -1,7 +1,7 @@
-import { ClaudeAdapter } from "@prompt-guide/adapter-claude";
-import { CodexAdapter } from "@prompt-guide/adapter-codex";
-import { CursorAdapter } from "@prompt-guide/adapter-cursor";
-import { resolveConfig } from "@prompt-guide/core";
+import { ClaudeAdapter } from "@pelagornis/prompt-guide-adapter-claude";
+import { CodexAdapter } from "@pelagornis/prompt-guide-adapter-codex";
+import { CursorAdapter } from "@pelagornis/prompt-guide-adapter-cursor";
+import { resolveConfig } from "@pelagornis/prompt-guide-core";
 import * as p from "@clack/prompts";
 import { defineCommand } from "citty";
 

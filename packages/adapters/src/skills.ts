@@ -1,5 +1,5 @@
 import type { GeneratedFile } from "./interface.js";
-import type { PromptGuideConfig, Skill } from "@prompt-guide/schema";
+import type { PromptGuideConfig, Skill } from "@pelagornis/prompt-guide-schema";
 
 export type SkillRenderOptions = {
   /** @deprecated All targets now use the same Agent Skills frontmatter */

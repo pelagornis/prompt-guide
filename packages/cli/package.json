@@ -1,28 +1,47 @@
 {
-  "name": "@prompt-guide/cli",
+  "name": "@pelagornis/prompt-guide",
   "version": "0.1.0",
+  "description": "Unified Claude Code, Codex, and Cursor configuration from prompt-guide.yml",
   "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pelagornis/prompt-guide.git"
+  },
   "bin": {
     "prompt-guide": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
-    "build": "tsc -p tsconfig.json && rm -rf ./templates && cp -r ../../templates ./templates",
+    "build": "tsup && rm -rf ./templates && cp -r ../../templates ./templates",
     "dev": "bun run --watch src/index.ts",
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "@prompt-guide/adapter-claude": "workspace:*",
-    "@prompt-guide/adapter-codex": "workspace:*",
-    "@prompt-guide/adapter-cursor": "workspace:*",
-    "@prompt-guide/adapters": "workspace:*",
-    "@prompt-guide/core": "workspace:*",
-    "@prompt-guide/schema": "workspace:*",
     "@clack/prompts": "^0.9.1",
     "citty": "^0.1.6",
-    "js-yaml": "^4.1.0"
+    "cosmiconfig": "^9.0.0",
+    "deepmerge-ts": "^7.1.5",
+    "js-yaml": "^4.1.0",
+    "neverthrow": "^8.2.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@pelagornis/prompt-guide-adapter-claude": "workspace:*",
+    "@pelagornis/prompt-guide-adapter-codex": "workspace:*",
+    "@pelagornis/prompt-guide-adapter-cursor": "workspace:*",
+    "@pelagornis/prompt-guide-adapters": "workspace:*",
+    "@pelagornis/prompt-guide-core": "workspace:*",
+    "@pelagornis/prompt-guide-schema": "workspace:*",
     "@types/js-yaml": "^4.0.9",
+    "tsup": "^8.4.0",
     "typescript": "^5.7.2"
   }
 }

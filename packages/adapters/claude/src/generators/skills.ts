@@ -1,6 +1,6 @@
-import { renderSkillMd } from "@prompt-guide/adapters";
-import type { GeneratedFile } from "@prompt-guide/adapters";
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import { renderSkillMd } from "@pelagornis/prompt-guide-adapters";
+import type { GeneratedFile } from "@pelagornis/prompt-guide-adapters";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 
 export function generateSkills(config: PromptGuideConfig): GeneratedFile[] {
   return config.context.skills.map((skill) => ({

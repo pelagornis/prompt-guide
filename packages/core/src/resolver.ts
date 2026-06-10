@@ -4,7 +4,7 @@ import { err, ok, type Result } from "neverthrow";
 import {
   PromptGuideConfigSchema,
   type PromptGuideConfig,
-} from "@prompt-guide/schema";
+} from "@pelagornis/prompt-guide-schema";
 
 export type ResolveError =
   | { type: "NOT_FOUND" }

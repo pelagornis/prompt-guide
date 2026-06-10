@@ -1,4 +1,4 @@
-import { resolveConfig } from "@prompt-guide/core";
+import { resolveConfig } from "@pelagornis/prompt-guide-core";
 import * as p from "@clack/prompts";
 import { defineCommand } from "citty";
 

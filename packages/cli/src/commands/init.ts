@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { ProjectType } from "@prompt-guide/schema";
+import type { ProjectType } from "@pelagornis/prompt-guide-schema";
 import * as p from "@clack/prompts";
 import { defineCommand } from "citty";
 import yaml from "js-yaml";

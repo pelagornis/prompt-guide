@@ -1,5 +1,5 @@
-import type { GeneratedFile } from "@prompt-guide/adapters";
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { GeneratedFile } from "@pelagornis/prompt-guide-adapters";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 
 export function generateMcpJson(config: PromptGuideConfig): GeneratedFile[] {
   if (!config.context.mcp_servers.length) return [];

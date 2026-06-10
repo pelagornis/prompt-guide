@@ -1,5 +1,5 @@
-import type { GeneratedFile } from "@prompt-guide/adapters";
-import type { Agent, PromptGuideConfig } from "@prompt-guide/schema";
+import type { GeneratedFile } from "@pelagornis/prompt-guide-adapters";
+import type { Agent, PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 
 function renderAgentFrontmatter(agent: Agent): string {
   const lines = [

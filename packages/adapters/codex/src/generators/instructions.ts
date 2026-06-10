@@ -1,5 +1,5 @@
-import type { GeneratedFile } from "@prompt-guide/adapters";
-import type { PromptGuideConfig } from "@prompt-guide/schema";
+import type { GeneratedFile } from "@pelagornis/prompt-guide-adapters";
+import type { PromptGuideConfig } from "@pelagornis/prompt-guide-schema";
 
 /** Path-scoped instruction files (progressive disclosure for Codex) */
 export function generateInstructionFiles(

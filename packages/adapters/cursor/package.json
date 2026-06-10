@@ -1,6 +1,7 @@
 {
-  "name": "@prompt-guide/adapter-cursor",
+  "name": "@pelagornis/prompt-guide-adapter-cursor",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "exports": {
     ".": {
@@ -13,8 +14,8 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "@prompt-guide/adapters": "workspace:*",
-    "@prompt-guide/schema": "workspace:*",
+    "@pelagornis/prompt-guide-adapters": "workspace:*",
+    "@pelagornis/prompt-guide-schema": "workspace:*",
     "neverthrow": "^8.2.0"
   },
   "devDependencies": {
