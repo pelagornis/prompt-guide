@@ -9,7 +9,7 @@ name: Release to npm
 on:
   push:
     tags:
-      - "v*"
+      - "*"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
