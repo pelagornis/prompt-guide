@@ -21,6 +21,7 @@ const sampleConfig = {
         description: "Create SwiftUI view",
         allowed_tools: ["Read"],
         auto_invoke: true,
+        paths: [],
         prompt: "Create MVVM view",
       },
     ],

@@ -31,12 +31,38 @@ export function generateClaudeMd(config: PromptGuideConfig): GeneratedFile[] {
   }
 
   if (context.skills.length) {
-    lines.push("\n## Slash commands");
+    lines.push("\n## Skills");
+    lines.push(
+      "Agent Skills (agentskills.io) in `.claude/skills/` and `.agents/skills/`.",
+    );
+    lines.push(
+      "Invoke manually with `/skill-name` or let Claude match by description.",
+    );
     for (const s of context.skills) {
+      const mode = s.auto_invoke ? "auto" : "manual";
       lines.push(
-        `- /${s.name} — ${s.description.split("\n")[0]} (see \`.agents/skills/${s.name}/SKILL.md\`)`,
+        `- \`${s.name}\` (${mode}) — ${s.description.split("\n")[0]}`,
       );
     }
+  }
+
+  if (context.agents.length) {
+    lines.push("\n## Subagents");
+    lines.push(
+      "Custom subagents in `.claude/agents/`. Claude delegates by each agent's `description`.",
+    );
+    lines.push(
+      "Built-in subagents (Explore, Plan, general-purpose) are always available.",
+    );
+    for (const agent of context.agents) {
+      const model = agent.model ? `, model: ${agent.model}` : "";
+      lines.push(
+        `- \`${agent.name}\`${model} — ${agent.description.split("\n")[0]}`,
+      );
+    }
+    lines.push(
+      "\nPolicy: Prefer subagents for read-heavy exploration and dedicated reviews to keep the main thread lean.",
+    );
   }
 
   return [{ path: "CLAUDE.md", content: lines.join("\n") }];

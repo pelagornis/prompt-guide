@@ -2,26 +2,55 @@ import type { GeneratedFile } from "./interface.js";
 import type { PromptGuideConfig, Skill } from "@prompt-guide/schema";
 
 export type SkillRenderOptions = {
-  /** Claude Code-only frontmatter fields */
+  /** @deprecated All targets now use the same Agent Skills frontmatter */
   claude?: boolean;
 };
 
-/** Agent Skills open standard (agentskills.io) — space-separated allowed-tools */
+function yamlScalar(value: string): string {
+  if (/[:#\n'"&*!?|>@[\]{},]/.test(value) || value.trim() !== value) {
+    return JSON.stringify(value);
+  }
+  return value;
+}
+
+/** Agent Skills open standard (agentskills.io) + Cursor paths / disable-model-invocation */
 export function renderSkillMd(
   skill: Skill,
-  options: SkillRenderOptions = {},
+  _options: SkillRenderOptions = {},
 ): string {
   const frontmatterLines = [
     "---",
     `name: ${skill.name}`,
-    `description: ${skill.description.trim().split("\n").join(" ")}`,
+    `description: ${yamlScalar(skill.description.trim().split("\n").join(" "))}`,
   ];
 
   if (skill.allowed_tools.length) {
     frontmatterLines.push(`allowed-tools: ${skill.allowed_tools.join(" ")}`);
   }
 
-  if (options.claude && !skill.auto_invoke) {
+  if (skill.paths.length) {
+    frontmatterLines.push("paths:");
+    for (const pattern of skill.paths) {
+      frontmatterLines.push(`  - ${yamlScalar(pattern)}`);
+    }
+  }
+
+  if (skill.license) {
+    frontmatterLines.push(`license: ${yamlScalar(skill.license)}`);
+  }
+
+  if (skill.compatibility) {
+    frontmatterLines.push(`compatibility: ${yamlScalar(skill.compatibility)}`);
+  }
+
+  if (skill.metadata && Object.keys(skill.metadata).length) {
+    frontmatterLines.push("metadata:");
+    for (const [key, value] of Object.entries(skill.metadata)) {
+      frontmatterLines.push(`  ${key}: ${yamlScalar(value)}`);
+    }
+  }
+
+  if (!skill.auto_invoke) {
     frontmatterLines.push("disable-model-invocation: true");
   }
 
@@ -46,6 +75,11 @@ export function generateSharedSkillFiles(
 
     files.push({
       path: `~/.agents/skills/${skill.name}/SKILL.md`,
+      content,
+    });
+
+    files.push({
+      path: `~/.cursor/skills/${skill.name}/SKILL.md`,
       content,
     });
   }

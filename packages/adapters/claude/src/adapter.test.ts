@@ -21,6 +21,7 @@ const sampleConfig = {
         description: "Create SwiftUI view",
         allowed_tools: ["Read", "Write"],
         auto_invoke: true,
+        paths: [],
         prompt: "Create MVVM view",
       },
     ],
@@ -28,7 +29,11 @@ const sampleConfig = {
       {
         name: "reviewer",
         description: "Review code",
-        tools: ["Read"],
+        tools: ["Read", "Grep"],
+        disallowed_tools: ["Write", "Edit"],
+        skills: [],
+        background: false,
+        model: "sonnet" as const,
         prompt: "Review changes",
       },
     ],
@@ -53,5 +58,13 @@ describe("ClaudeAdapter", () => {
     expect(paths).toContain(".claude/skills/generate-view/SKILL.md");
     expect(paths).toContain(".claude/agents/reviewer.md");
     expect(paths).toContain(".claude/hooks/block-dangerous.sh");
+
+    const agent = result.value.find((f) => f.path === ".claude/agents/reviewer.md");
+    expect(agent?.content).toContain("model: sonnet");
+    expect(agent?.content).toContain("disallowedTools: Write, Edit");
+
+    const claudeMd = result.value.find((f) => f.path === "CLAUDE.md");
+    expect(claudeMd?.content).toContain("## Subagents");
+    expect(claudeMd?.content).toContain("## Skills");
   });
 });

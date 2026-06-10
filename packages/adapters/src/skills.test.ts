@@ -7,6 +7,7 @@ describe("renderSkillMd", () => {
     description: "Create SwiftUI view",
     allowed_tools: ["Read", "Write", "Bash(swift:*)"],
     auto_invoke: false,
+    paths: ["**/*.swift"] as string[],
     prompt: "Create MVVM view",
   };
 
@@ -16,13 +17,19 @@ describe("renderSkillMd", () => {
     expect(md).not.toContain("allowed-tools: Read, Write");
   });
 
-  it("adds disable-model-invocation for Claude when auto_invoke is false", () => {
-    const md = renderSkillMd(skill, { claude: true });
+  it("emits paths for Cursor file scoping", () => {
+    const md = renderSkillMd(skill);
+    expect(md).toContain("paths:");
+    expect(md).toContain('  - "**/*.swift"');
+  });
+
+  it("adds disable-model-invocation when auto_invoke is false", () => {
+    const md = renderSkillMd(skill);
     expect(md).toContain("disable-model-invocation: true");
   });
 
-  it("omits Claude fields in standard Agent Skills output", () => {
-    const md = renderSkillMd(skill);
+  it("omits disable-model-invocation when auto_invoke is true", () => {
+    const md = renderSkillMd({ ...skill, auto_invoke: true });
     expect(md).not.toContain("disable-model-invocation");
   });
 });

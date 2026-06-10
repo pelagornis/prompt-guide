@@ -5,6 +5,6 @@ import type { PromptGuideConfig } from "@prompt-guide/schema";
 export function generateSkills(config: PromptGuideConfig): GeneratedFile[] {
   return config.context.skills.map((skill) => ({
     path: `.claude/skills/${skill.name}/SKILL.md`,
-    content: renderSkillMd(skill, { claude: true }),
+    content: renderSkillMd(skill),
   }));
 }

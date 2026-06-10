@@ -10,7 +10,12 @@
     "test": "turbo run test",
     "lint": "biome check packages templates",
     "format": "biome format --write packages templates",
-    "pg": "node packages/cli/dist/index.js"
+    "pg": "node packages/cli/dist/index.js",
+    "example:sync": "cd example && node ../packages/cli/dist/index.js sync",
+    "example:doctor": "cd example && node ../packages/cli/dist/index.js doctor",
+    "example:validate": "cd example && node ../packages/cli/dist/index.js validate",
+    "example:diff": "cd example && node ../packages/cli/dist/index.js diff",
+    "example:status": "cd example && node ../packages/cli/dist/index.js status"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

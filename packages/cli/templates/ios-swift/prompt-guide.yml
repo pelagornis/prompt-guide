@@ -48,9 +48,10 @@ context:
 
   skills:
     - name: generate-view
-      description: Create SwiftUI view + ViewModel. Auto-invoke when editing Swift files.
+      description: Create SwiftUI view + ViewModel. Use when adding or editing SwiftUI screens.
       allowed_tools: [Read, Write, "Bash(swift:*)"]
       auto_invoke: true
+      paths: ["**/*.swift"]
       prompt: |
         Create a SwiftUI view using MVVM:
         1. Parse $ARGUMENTS for view name and data types
@@ -70,8 +71,11 @@ context:
 
   agents:
     - name: reviewer
-      description: Dedicated code review sub-agent
-      tools: [Read, "Bash(git:*)"]
+      description: Expert code reviewer. Use proactively after code changes or when reviewing diffs.
+      tools: [Read, Grep, Glob, "Bash(git:*)"]
+      disallowed_tools: [Write, Edit]
+      model: sonnet
+      permission_mode: dontAsk
       prompt: |
         Review changed code and report improvements in English.
         Order: architecture → performance → security → style.

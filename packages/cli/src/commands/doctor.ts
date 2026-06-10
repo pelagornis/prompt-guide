@@ -73,15 +73,22 @@ export const doctorCommand = defineCommand({
         }
       }
 
-      for (const path of [
-        "CLAUDE.md",
-        ".claude/settings.json",
-      ]) {
+      for (const path of ["CLAUDE.md", ".claude/settings.json"]) {
         if (await fileExists(path)) {
           p.log.success(`✓ ${path}`);
         } else {
           p.log.error(`✗ ${path} missing — run \`prompt-guide sync\``);
           issues++;
+        }
+      }
+
+      for (const agent of config.context.agents) {
+        const path = `.claude/agents/${agent.name}.md`;
+        if (await fileExists(path)) {
+          p.log.success(`✓ ${path}`);
+        } else {
+          p.log.warn(`✗ ${path} missing — run \`prompt-guide sync\``);
+          warnings++;
         }
       }
     }
@@ -107,20 +114,29 @@ export const doctorCommand = defineCommand({
     }
 
     for (const skill of config.context.skills) {
-      const projectSkill = `.agents/skills/${skill.name}/SKILL.md`;
-      const homeSkill = `~/.agents/skills/${skill.name}/SKILL.md`;
+      const checks = [
+        `.agents/skills/${skill.name}/SKILL.md`,
+        `~/.agents/skills/${skill.name}/SKILL.md`,
+        `~/.cursor/skills/${skill.name}/SKILL.md`,
+      ];
 
-      if (await fileExists(projectSkill)) {
-        p.log.success(`✓ ${projectSkill}`);
-      } else {
-        p.log.warn(`✗ ${projectSkill} missing — run \`prompt-guide sync\``);
-        warnings++;
+      if (config.tools.claude_code) {
+        checks.push(`.claude/skills/${skill.name}/SKILL.md`);
+      }
+      if (config.tools.cursor) {
+        checks.push(`.cursor/skills/${skill.name}/SKILL.md`);
       }
 
-      if (await fileExists(homeSkill)) {
-        p.log.success(`✓ ${homeSkill}`);
-      } else {
-        p.log.info(`  ${homeSkill} not synced yet (created on sync)`);
+      for (const skillPath of checks) {
+        const isHome = skillPath.startsWith("~/");
+        if (await fileExists(skillPath)) {
+          p.log.success(`✓ ${skillPath}`);
+        } else if (isHome) {
+          p.log.info(`  ${skillPath} not synced yet (created on sync)`);
+        } else {
+          p.log.warn(`✗ ${skillPath} missing — run \`prompt-guide sync\``);
+          warnings++;
+        }
       }
     }
 

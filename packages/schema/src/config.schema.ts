@@ -20,14 +20,58 @@ export const SkillSchema = z.object({
   name: z.string(),
   description: z.string(),
   allowed_tools: z.array(z.string()).default([]),
+  /** When false, emits disable-model-invocation (manual / slash-style invocation) */
   auto_invoke: z.boolean().default(false),
+  /** Cursor paths frontmatter — glob patterns that scope the skill to matching files */
+  paths: z.array(z.string()).default([]),
+  compatibility: z.string().optional(),
+  license: z.string().optional(),
+  metadata: z.record(z.string()).optional(),
   prompt: z.string(),
 });
 
+export const AgentModelSchema = z.enum([
+  "sonnet",
+  "opus",
+  "haiku",
+  "inherit",
+]);
+
+export const AgentPermissionModeSchema = z.enum([
+  "default",
+  "acceptEdits",
+  "auto",
+  "dontAsk",
+  "bypassPermissions",
+  "plan",
+]);
+
 export const AgentSchema = z.object({
   name: z.string(),
+  /** When Claude should delegate — critical for automatic subagent routing */
   description: z.string(),
   tools: z.array(z.string()).default([]),
+  disallowed_tools: z.array(z.string()).default([]),
+  model: AgentModelSchema.optional(),
+  permission_mode: AgentPermissionModeSchema.optional(),
+  max_turns: z.number().int().positive().optional(),
+  /** Skill names to preload into subagent context at startup */
+  skills: z.array(z.string()).default([]),
+  memory: z.enum(["user", "project", "local"]).optional(),
+  background: z.boolean().default(false),
+  color: z
+    .enum([
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "purple",
+      "orange",
+      "pink",
+      "cyan",
+    ])
+    .optional(),
+  isolation: z.enum(["worktree"]).optional(),
   prompt: z.string(),
 });
 

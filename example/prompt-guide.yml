@@ -1,0 +1,84 @@
+version: "1"
+
+project:
+  name: example-app
+  type: web-react
+  description: Local sandbox for testing prompt-guide sync output
+
+tools:
+  claude_code: true
+  codex: true
+  cursor: true
+
+context:
+  tech_stack:
+    - React
+    - TypeScript
+    - Vite
+
+  summary: |
+    Example app for validating prompt-guide CLI output.
+    Functional components + hooks. No any types.
+
+  path_rules:
+    - name: react-components
+      path: ["**/*.{tsx,jsx}"]
+      description: React component rules
+      content: |
+        - Functional components + hooks
+        - Define props with interface
+        - Avoid unnecessary useEffect
+
+    - name: tests
+      path: ["**/*.{test,spec}.{ts,tsx}"]
+      content: |
+        - Use Vitest + Testing Library
+        - One behavior per test
+        - Prefer user-facing queries
+
+  skills:
+    - name: generate-component
+      description: Create a React component with TypeScript props. Use when adding UI components.
+      allowed_tools: [Read, Write]
+      auto_invoke: false
+      paths: ["**/*.{tsx,jsx}"]
+      prompt: |
+        Create a React component:
+        1. Parse $ARGUMENTS for component name and props
+        2. Add a typed props interface
+        3. Export as named export
+
+    - name: review-pr
+      description: Review PR changes when requested. Use for code review or diff analysis.
+      allowed_tools: [Read, "Bash(git:*)"]
+      auto_invoke: false
+      prompt: |
+        Review the PR:
+        1. Run git diff to see changes
+        2. Check types, hooks, and test coverage
+        3. Summarize improvements
+
+  agents:
+    - name: reviewer
+      description: Expert code reviewer. Use proactively after code changes or when reviewing diffs.
+      tools: [Read, Grep, Glob, "Bash(git:*)"]
+      disallowed_tools: [Write, Edit]
+      model: sonnet
+      permission_mode: dontAsk
+      prompt: |
+        Review changed files and report issues by severity.
+        Order: architecture → security → performance → style.
+
+  hooks:
+    post_write: []
+    pre_bash:
+      - matcher: "Bash"
+        command: ".claude/hooks/block-dangerous.sh"
+        timeout: 5
+
+  forbidden:
+    - "Using any type"
+    - "Committing console.log"
+
+  cursor:
+    always_apply_rules: [core]

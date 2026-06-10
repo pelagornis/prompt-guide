@@ -1,9 +1,9 @@
 import type { GeneratedFile } from "@prompt-guide/adapters";
 import type { PromptGuideConfig } from "@prompt-guide/schema";
 
-/** Lean root AGENTS.md — details live in linked instruction and skill files */
+/** Lean root AGENTS.md — shared by Codex and Cursor; details in linked files */
 export function generateAgentsMd(config: PromptGuideConfig): GeneratedFile[] {
-  const { project, context } = config;
+  const { project, context, tools } = config;
   const lines: string[] = [];
 
   lines.push(`# AGENTS.md — ${project.name}`);
@@ -27,23 +27,55 @@ export function generateAgentsMd(config: PromptGuideConfig): GeneratedFile[] {
 
   if (context.path_rules.length) {
     lines.push("\n## Path-scoped rules");
-    lines.push(
-      "Detailed rules load from `.codex/instructions/` (see Codex project doc discovery):",
-    );
-    for (const rule of context.path_rules) {
+    if (tools.codex) {
       lines.push(
-        `- \`.codex/instructions/${rule.name}.md\` — \`${rule.path.join(", ")}\``,
+        "Codex loads `.codex/instructions/*.md` via project doc discovery (root → cwd):",
       );
+      for (const rule of context.path_rules) {
+        lines.push(
+          `- \`.codex/instructions/${rule.name}.md\` — \`${rule.path.join(", ")}\``,
+        );
+      }
+    }
+    if (tools.cursor) {
+      lines.push(
+        "Cursor loads `.cursor/rules/*.mdc` (alwaysApply or globs):",
+      );
+      for (const rule of context.path_rules) {
+        lines.push(
+          `- \`.cursor/rules/${rule.name}.mdc\` — \`${rule.path.join(", ")}\``,
+        );
+      }
     }
   }
 
   if (context.skills.length) {
-    lines.push("\n## Skills");
+    lines.push("\n## Agent Skills");
     lines.push(
-      "Workflows follow the Agent Skills standard in `.agents/skills/` (shared with Claude Code and Cursor):",
+      "Cross-tool workflows (Agent Skills open standard). Codex discovers `.agents/skills/` from cwd up to repo root; Cursor also reads `.cursor/skills/` and `~/.cursor/skills/`.",
+    );
+    lines.push(
+      "Invoke explicitly with `$skill-name` (Codex) or `/skill-name` (Cursor).",
     );
     for (const s of context.skills) {
-      lines.push(`- \`.agents/skills/${s.name}/SKILL.md\` — ${s.description.split("\n")[0]}`);
+      const scope = s.paths.length
+        ? ` (paths: ${s.paths.join(", ")})`
+        : "";
+      lines.push(
+        `- \`.agents/skills/${s.name}/SKILL.md\`${scope} — ${s.description.split("\n")[0]}`,
+      );
+    }
+  }
+
+  if (context.agents.length && tools.claude_code) {
+    lines.push("\n## Claude Code subagents");
+    lines.push(
+      "Claude-only specialists in `.claude/agents/`. Not loaded by Codex or Cursor.",
+    );
+    for (const agent of context.agents) {
+      lines.push(
+        `- \`.claude/agents/${agent.name}.md\` — ${agent.description.split("\n")[0]}`,
+      );
     }
   }
 
